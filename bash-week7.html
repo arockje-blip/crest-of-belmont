@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week Seven | Weekly Bash - Wrap-up Bash</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #121212;
+      --surface: #1e1e1e;
+      --accent: #bc6ff1; /* Purple from the poster */
+      --text-main: #ffffff;
+      --text-dim: #b0b0b0;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: "Cormorant Garamond", serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 60px 20px;
+    }
+
+    .container { width: min(100%, 900px); text-align: center; }
+
+    .header-section { margin-bottom: 60px; }
+    .clan-logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto 30px;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 20px rgba(188, 111, 241, 0.3);
+      object-fit: cover;
+      display: block;
+    }
+    .header-section h1 {
+      font-family: "Cinzel", serif; font-size: 3.5rem; margin: 0;
+      text-transform: uppercase; color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+    .header-subtitle { font-family: "Cinzel", serif; font-size: 1.2rem; margin-top: 10px; color: var(--text-dim); }
+
+    .schedule-poster {
+      width: 100%; max-width: 500px;
+      border-radius: 15px; margin: 40px 0;
+      box-shadow: 0 20px 50px rgba(188, 111, 241, 0.2);
+      border: 2px solid var(--accent);
+    }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      display: grid; gap: 15px; margin: 40px auto; max-width: 600px;
+    }
+    .timeline-item {
+      display: flex; align-items: center; gap: 20px;
+      background: var(--surface); padding: 15px 25px;
+      border-radius: 10px; border: 1px solid var(--border);
+      transition: all 0.3s ease; text-align: left;
+    }
+    .timeline-item:hover {
+      border-color: var(--accent); transform: scale(1.02);
+      box-shadow: 0 10px 30px rgba(188, 111, 241, 0.1);
+    }
+    .time {
+      font-family: "Cinzel", serif; font-weight: 700; color: var(--accent);
+      min-width: 90px;
+    }
+    .arrow { color: var(--accent); font-size: 1.2rem; }
+    .task { font-family: "Cinzel", serif; font-size: 1.1rem; flex: 1; }
+
+    /* ── GALLERY ── */
+    .gallery-section { margin-top: 100px; width: 100%; }
+    .gallery-section h2 { font-family: "Cinzel", serif; font-size: 2.5rem; margin-bottom: 40px; }
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .gallery-item {
+      aspect-ratio: 1; overflow: hidden; border-radius: 12px;
+      border: 1px solid var(--border); transition: 0.3s;
+    }
+    .gallery-item:hover { transform: translateY(-10px); border-color: var(--accent); }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ── WEEK NAVIGATION ── */
+    .week-navigation-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 60px 0 30px;
+      padding-top: 30px;
+      border-top: 1px solid var(--border);
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      font-family: "Cinzel", serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 12px 24px;
+      border-radius: 50px;
+      background: var(--surface);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      box-shadow: 0 4px 15px rgba(188, 111, 241, 0.1);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .nav-btn:hover {
+      background: var(--accent);
+      color: #000;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(188, 111, 241, 0.3);
+    }
+
+    .back-nav { margin-top: 40px; }
+    .btn-back {
+      text-decoration: none; color: var(--accent); font-family: "Cinzel", serif;
+      font-weight: 700; border: 1px solid var(--accent); padding: 12px 30px;
+      border-radius: 50px; transition: 0.3s;
+    }
+    .btn-back:hover { background: var(--accent); color: #000; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header-section">
+      <img src="images/w b media/bashers.png" alt="Bashers Logo" class="clan-logo">
+      <h1>Wrap-up Bash</h1>
+      <div class="header-subtitle">BYTE-BASH-BLITZ | MARCH 14, 2026</div>
+    </div>
+
+    <img src="images/w b media/wrapup/Screenshot 2026-03-18 202900.png" alt="Wrap-up Bash Poster" class="schedule-poster">
+
+    <div class="timeline">
+      <div class="timeline-item"><span class="time">10:00 AM</span> <span class="arrow">→</span> <span class="task">Intro and Hurdle - Jeshwin</span></div>
+      <div class="timeline-item"><span class="time">10:15 AM</span> <span class="arrow">→</span> <span class="task">ComeBack - Dr. Pon Parthiban</span></div>
+      <div class="timeline-item"><span class="time">10:50 AM</span> <span class="arrow">→</span> <span class="task">Pookie Rookie</span></div>
+      <div class="timeline-item"><span class="time">11:20 AM</span> <span class="arrow">→</span> <span class="task">Break</span></div>
+      <div class="timeline-item"><span class="time">11:35 AM</span> <span class="arrow">→</span> <span class="task">Pookie Rookie - 2</span></div>
+      <div class="timeline-item"><span class="time">12:10 PM</span> <span class="arrow">→</span> <span class="task">Lunch Break</span></div>
+      <div class="timeline-item"><span class="time">01:00 PM</span> <span class="arrow">→</span> <span class="task">Pookie Rookie - 3</span></div>
+      <div class="timeline-item"><span class="time">01:40 PM</span> <span class="arrow">→</span> <span class="task">Final Feeds</span></div>
+      <div class="timeline-item"><span class="time">02:30 PM</span> <span class="arrow">→</span> <span class="task">Rookie Reward</span></div>
+    </div>
+
+    <div class="gallery-section">
+      <h2>Grand Finale Gallery</h2>
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0081.jpg" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0092.jpg" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0112.jpg" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0136.jpg" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0140.jpg" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0141.jpg" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0147.jpg" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0151.jpg" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0162.jpg" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0171.jpg" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/Screenshot 2026-03-18 195531.png" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/Screenshot 2026-03-18 195540.png" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/Screenshot 2026-03-18 195555.png" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/Screenshot 2026-03-18 195602.png" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/Screenshot 2026-03-18 195613.png" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/Screenshot 2026-03-18 195636.png" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/Screenshot 2026-03-18 195644.png" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/Screenshot 2026-03-18 195650.png" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/Screenshot 2026-03-18 195657.png" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/Screenshot 2026-03-18 195704.png" alt="Wrap-up Highlight"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/Screenshot 2026-03-18 195710.png" alt="Wrap-up Highlight"></div>
+      </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="week-navigation-container">
+      <a href="bash-week6.html" class="nav-btn">← Previous Week</a>
+      <a href="weekly-bash.html" class="nav-btn">Back to All Weeks</a>
+    </div>
+
+    <div class="back-nav">
+      <a href="weekly-bash.html" class="btn-back">← Back to Weekly Bash Archives</a>
+    </div>
+  </div>
+
+</body>
+</html>

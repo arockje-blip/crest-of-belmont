@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Belmont Edition | Basher Dev Squad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── MARVEL-STYLE SPLASH REVEAL ── */
+    #splash-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.5s ease;
+      overflow: hidden;
+    }
+
+    #splash-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Marvel-style Photo Flip Container inside Letters */
+    #marvel-flipper {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      pointer-events: none;
+      z-index: 5;
+      animation: flicker-drift 12s linear infinite;
+    }
+
+    @keyframes flicker-drift {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1) translateX(10px); }
+      100% { transform: scale(1); }
+    }
+
+    .flicker-photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 20ms ease-out;
+    }
+
+    .flicker-photo.active {
+      opacity: 1;
+    }
+
+    /* Cinematic Letter Sequences */
+    .letter-stage {
+      position: absolute;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: clamp(240px, 40vw, 320px);
+      height: clamp(340px, 50vw, 420px);
+      background: #e23636; /* Classic Marvel Red */
+      border: 8px solid #fff;
+      box-shadow: 0 0 100px rgba(0,0,0,0.8);
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .letter-stage span {
+      font-family: "Cinzel", serif;
+      font-weight: 900;
+      font-size: clamp(8rem, 20vw, 15rem);
+      color: #000;
+      mix-blend-mode: destination-out; /* Punch through the red */
+      position: relative;
+      z-index: 10;
+    }
+
+    #splash-overlay {
+      background: #000; /* Force black background for the stencil effect */
+    }
+
+    /* Container for the final ensemble */
+    #full-word-wrapper {
+      position: absolute;
+      display: none;
+      flex-direction: row;
+      gap: clamp(4px, 1vw, 12px);
+      z-index: 200;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      justify-content: center;
+    }
+
+    .word-letter {
+      background: #e23636;
+      width: clamp(40px, 8vw, 100px);
+      height: clamp(60px, 12vw, 140px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: clamp(2px, 0.5vw, 4px) solid #fff;
+    }
+
+    .word-letter span {
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: clamp(2rem, 6vw, 5rem);
+      color: #000;
+      mix-blend-mode: destination-out;
+    }
+
+    /* Final Logo & Crest Appearance */
+    #skip-reveal {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      z-index: 10000;
+      font-family: 'Cinzel', serif;
+      color: #efc784;
+      font-size: 0.8rem;
+      letter-spacing: 0.2rem;
+      padding: 12px 24px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(239, 199, 132, 0.4);
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      display: none;
+    }
+
+    #skip-reveal:hover {
+      background: rgba(239, 199, 132, 0.2);
+      border-color: #efc784;
+      transform: scale(1.05);
+    }
+
+    #final-reveal {
+      position: relative;
+      z-index: 500;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: final-zoom-out 5s cubic-bezier(0.1, 0, 0, 1) forwards;
+    }
+
+    .reveal-crest-container {
+      width: clamp(200px, 20vw, 300px);
+      height: clamp(200px, 20vw, 300px);
+      border-radius: 50%;
+      border: 6px solid #efc784;
+      background: radial-gradient(circle, #4a3421, #000);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 100px rgba(226, 54, 54, 0.4), 0 0 40px rgba(239, 199, 132, 0.6);
+      margin-bottom: 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .reveal-crest-title {
+      font-family: "Cinzel", serif;
+      background: linear-gradient(180deg, #fff 0%, #efc784 50%, #d9a65a 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: clamp(3rem, 10vw, 6.5rem);
+      font-weight: 900;
+      letter-spacing: 0.4em;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 30px rgba(239, 199, 132, 0.5));
+      text-transform: uppercase;
+      animation: text-glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes text-glow {
+      from { filter: drop-shadow(0 0 20px rgba(239, 199, 132, 0.4)); }
+      to { filter: drop-shadow(0 0 40px rgba(239, 199, 132, 0.8)); }
+    }
+
+    .reveal-crest-tagline {
+      font-family: "Cinzel", serif;
+      color: #efc784;
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      letter-spacing: 1.2em;
+      opacity: 0;
+      margin-top: 10px;
+      text-transform: uppercase;
+      animation: tagline-fade-in 2s ease-out 2s forwards;
+    }
+
+    @keyframes tagline-fade-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 0.9; transform: translateY(0); }
+    }
+
+    /* Page Content Hidden Initially */
+    #main-content {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 2s ease, transform 2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #main-content.revealed {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* ── EXISTING STYLES ── */
+    :root {
+      --bg: #d9a65a;
+      --bg-deep: #c28e43;
+      --surface: #4a3421;
+      --surface-soft: #5c4229;
+      --panel: #2f2116;
+      --text-dark: #3c2919;
+      --text-gold: #efc784;
+      --text-ivory: #f7ebcf;
+      --shadow: 0 22px 50px rgba(43, 29, 16, 0.22);
+      --shadow-strong: 0 24px 55px rgba(25, 16, 9, 0.38);
+      --radius-lg: 28px;
+      --radius-sm: 12px;
+      --max-width: 1200px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Cormorant Garamond", serif;
+      color: var(--text-dark);
+      background:
+        radial-gradient(circle at top left, rgba(255, 237, 202, 0.34), transparent 28%),
+        radial-gradient(circle at 85% 14%, rgba(104, 73, 41, 0.18), transparent 22%),
+        linear-gradient(180deg, #e0af63 0%, var(--bg) 38%, var(--bg-deep) 100%);
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(10px);
+      opacity: 0.28;
+      z-index: 0;
+    }
+
+    body::before {
+      top: -100px;
+      left: -90px;
+      background: radial-gradient(circle, rgba(247, 235, 207, 0.75), transparent 68%);
+    }
+
+    body::after {
+      right: -90px;
+      bottom: -120px;
+      background: radial-gradient(circle, rgba(74, 52, 33, 0.42), transparent 72%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .page-shell {
+      position: relative;
+      z-index: 1;
+      width: min(calc(100% - 32px), var(--max-width));
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 12px;
+      z-index: 30;
+      margin-bottom: 28px;
+    }
+
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 22px;
+      border: 1px solid rgba(247, 235, 207, 0.18);
+      border-radius: 999px;
+      background: rgba(47, 33, 22, 0.88);
+      color: var(--text-gold);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(239, 199, 132, 0.4);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(247, 235, 207, 0.26), transparent 46%),
+        linear-gradient(145deg, #7b5a36, #3f2a19);
+      font-family: "Cinzel", serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+    }
+
+    .brand-copy strong,
+    .brand-copy span {
+      display: block;
+    }
+
+    .brand-copy strong {
+      font-family: "Cinzel", serif;
+      font-size: 1rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .brand-copy span {
+      font-size: 0.95rem;
+      color: rgba(247, 235, 207, 0.8);
+      letter-spacing: 0.04em;
+    }
+
+    .desktop-nav {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 1.05rem;
+      letter-spacing: 0.06em;
+    }
+
+    .desktop-nav a {
+      position: relative;
+      padding: 8px 2px;
+    }
+
+    .desktop-nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      transform: scaleX(0);
+      transform-origin: center;
+      background: var(--text-gold);
+      transition: transform 180ms ease;
+    }
+
+    .desktop-nav a:hover::after,
+    .desktop-nav a:focus-visible::after {
+      transform: scaleX(1);
+    }
+
+    .menu-toggle {
+      display: none;
+      width: 48px;
+      height: 48px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(239, 199, 132, 0.12);
+      color: var(--text-gold);
+      cursor: pointer;
+    }
+
+    .menu-toggle svg {
+      width: 24px;
+      height: 24px;
+      margin: auto;
+      display: block;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 20px;
+      background: rgba(24, 16, 10, 0.82);
+      z-index: 40;
+    }
+
+    .mobile-menu.open {
+      display: grid;
+    }
+
+    .mobile-panel {
+      width: min(100%, 360px);
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      background: var(--panel);
+      color: var(--text-gold);
+      box-shadow: var(--shadow-strong);
+      border: 1px solid rgba(239, 199, 132, 0.18);
+    }
+
+    .mobile-panel header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .mobile-panel strong {
+      font-family: "Cinzel", serif;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .mobile-close {
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font-size: 1.8rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .mobile-links {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mobile-links a {
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      background: rgba(239, 199, 132, 0.08);
+      border: 1px solid rgba(239, 199, 132, 0.08);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 54px clamp(22px, 5vw, 54px);
+      border-radius: 36px;
+      background:
+        linear-gradient(135deg, rgba(255, 239, 213, 0.22), transparent 30%),
+        linear-gradient(180deg, rgba(74, 52, 33, 0.92) 0%, rgba(47, 33, 22, 0.96) 100%);
+      color: var(--text-gold);
+      box-shadow: var(--shadow-strong);
+      isolation: isolate;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: auto -10% -25% auto;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(239, 199, 132, 0.18), transparent 65%);
+      z-index: -1;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 34px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(239, 199, 132, 0.12);
+      font-size: 0.95rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before,
+    .eyebrow::after {
+      content: "";
+      width: 28px;
+      height: 1px;
+      background: rgba(239, 199, 132, 0.48);
+    }
+
+    .hero h1,
+    .section-title,
+    .crest-card h2,
+    .footer-motto {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      max-width: 12ch;
+      font-size: clamp(2.8rem, 6vw, 4.8rem);
+      line-height: 0.95;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      margin: 0 0 16px;
+      font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+      line-height: 1.5;
+      color: rgba(247, 235, 207, 0.9);
+      max-width: 62ch;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .btn,
+    .tile {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 20px;
+      border-radius: 14px;
+      border: 1px solid rgba(239, 199, 132, 0.26);
+      font-family: "Cinzel", serif;
+      font-size: 0.98rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .btn.primary {
+      background: var(--bg);
+      color: var(--text-dark);
+      box-shadow: 0 12px 24px rgba(217, 166, 90, 0.22);
+    }
+
+    .btn.secondary {
+      background: rgba(239, 199, 132, 0.08);
+      color: var(--text-gold);
+    }
+
+    .btn:hover,
+    .btn:focus-visible,
+    .tile:hover,
+    .tile:focus-visible,
+    .leader-card:hover,
+    .member-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 34px rgba(24, 16, 10, 0.22);
+    }
+
+    .crest-card {
+      position: relative;
+      padding: 28px;
+      border-radius: 30px;
+      background:
+        linear-gradient(180deg, rgba(239, 199, 132, 0.12), rgba(239, 199, 132, 0.03)),
+        rgba(255, 247, 232, 0.06);
+      border: 1px solid rgba(239, 199, 132, 0.16);
+      backdrop-filter: blur(4px);
+    }
+
+    .crest-card::after {
+      content: "Ad Montem Sapientiae";
+      display: block;
+      margin-top: 18px;
+      font-family: "Cinzel", serif;
+      font-size: 0.86rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(247, 235, 207, 0.72);
+    }
+
+    .crest {
+      width: min(100%, 260px);
+      aspect-ratio: 1;
+      margin: 0 auto 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 32px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(247, 235, 207, 0.25), transparent 36%),
+        linear-gradient(145deg, #6c4b2c, #2d1d12);
+      border: 1px solid rgba(239, 199, 132, 0.18);
+      box-shadow: inset 0 0 0 1px rgba(247, 235, 207, 0.08);
+    }
+
+    .crest span {
+      width: 64%;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(239, 199, 132, 0.28);
+      font-family: "Cinzel", serif;
+      font-size: clamp(2.2rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+    }
+
+    .crest-card p {
+      margin: 0;
+      color: rgba(247, 235, 207, 0.86);
+      font-size: 1.15rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .tiles {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 26px 0 0;
+    }
+
+    .tile {
+      position: relative;
+      overflow: hidden;
+      min-height: 76px;
+      padding: 16px;
+      background: var(--surface-soft);
+      color: var(--text-gold);
+      text-align: center;
+      box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .tile::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.14) 50%, transparent 100%);
+      transform: translateX(-140%);
+      animation: tile-shimmer 5s linear infinite;
+    }
+
+    .tile strong,
+    .tile span {
+      position: relative;
+      z-index: 1;
+      display: block;
+    }
+
+    .tile strong {
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+
+    .tile span {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 1rem;
+      letter-spacing: 0.03em;
+      text-transform: none;
+      color: rgba(247, 235, 207, 0.82);
+    }
+
+    .content-section {
+      margin-top: 28px;
+      padding: clamp(24px, 4vw, 36px);
+      border-radius: 34px;
+      background: rgba(255, 245, 224, 0.5);
+      border: 1px solid rgba(60, 41, 25, 0.08);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(4px);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .section-kicker {
+      margin: 0 0 8px;
+      font-family: "Cinzel", serif;
+      font-size: 0.92rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(60, 41, 25, 0.72);
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--text-dark);
+    }
+
+    .section-copy {
+      margin: 0;
+      max-width: 60ch;
+      font-size: 1.2rem;
+      line-height: 1.55;
+      color: rgba(60, 41, 25, 0.88);
+    }
+
+    .vision-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .vision-panel,
+    .quote-panel,
+    .leader-card,
+    .member-card,
+    .stat-card {
+      border-radius: 24px;
+      background: rgba(255, 250, 239, 0.62);
+      border: 1px solid rgba(60, 41, 25, 0.08);
+    }
+
+    .vision-panel {
+      padding: 26px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .vision-panel p,
+    .quote-panel p {
+      margin: 0;
+      font-size: 1.18rem;
+      line-height: 1.6;
+    }
+
+    .vision-panel p + p {
+      margin-top: 16px;
+    }
+
+    .quote-panel {
+      display: grid;
+      gap: 18px;
+      padding: 26px;
+      background: linear-gradient(180deg, rgba(74, 52, 33, 0.96), rgba(47, 33, 22, 0.96));
+      color: var(--text-gold);
+      box-shadow: var(--shadow);
+    }
+
+    .quote-panel p {
+      color: rgba(247, 235, 207, 0.88);
+    }
+
+    .quote-mark {
+      font-family: "Cinzel", serif;
+      font-size: 4rem;
+      line-height: 0.8;
+      color: rgba(239, 199, 132, 0.28);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .stat-card {
+      padding: 18px 20px;
+      text-align: center;
+    }
+
+    .stat-value {
+      display: block;
+      font-family: "Cinzel", serif;
+      font-size: 2rem;
+      letter-spacing: 0.08em;
+    }
+
+    .stat-label {
+      display: block;
+      margin-top: 6px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(60, 41, 25, 0.68);
+    }
+
+    .explore-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .explore-card {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 28px;
+      border-radius: 24px;
+      background: rgba(255, 250, 239, 0.62);
+      border: 1px solid rgba(60, 41, 25, 0.08);
+      text-decoration: none;
+      color: var(--text-dark);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .explore-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 22px 44px rgba(24, 16, 10, 0.22);
+    }
+
+    .explore-icon {
+      font-size: 2rem;
+      color: rgba(60, 41, 25, 0.35);
+    }
+
+    .explore-card h3 {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .explore-card p {
+      margin: 0;
+      font-size: 1.08rem;
+      line-height: 1.5;
+      color: rgba(60, 41, 25, 0.78);
+      flex: 1;
+    }
+
+    .explore-link {
+      font-family: "Cinzel", serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dark);
+      margin-top: auto;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 550ms ease, transform 550ms ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .site-footer {
+      position: relative;
+      margin-top: 34px;
+      padding: 48px 24px 30px;
+      text-align: center;
+      color: var(--text-dark);
+    }
+
+    .mountains {
+      position: relative;
+      height: 86px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .mountains::before,
+    .mountains::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 86px;
+      background: linear-gradient(180deg, transparent, rgba(60, 41, 25, 0.08));
+      clip-path: polygon(0 100%, 10% 52%, 20% 100%, 33% 36%, 46% 100%, 58% 46%, 70% 100%, 84% 28%, 100% 100%);
+    }
+
+    .mountains::after {
+      opacity: 0.5;
+      transform: scaleY(0.72) translateY(12px);
+    }
+
+    .footer-motto {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      letter-spacing: 0.16em;
+      margin-bottom: 10px;
+    }
+
+    .site-footer p {
+      margin: 0;
+      font-size: 1.06rem;
+      letter-spacing: 0.04em;
+    }
+
+    @keyframes tile-shimmer {
+      from {
+        transform: translateX(-140%);
+      }
+
+      to {
+        transform: translateX(220%);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .vision-grid,
+      .explore-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero-grid,
+      .vision-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tiles,
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page-shell {
+        width: min(calc(100% - 18px), var(--max-width));
+        padding-top: 12px;
+      }
+
+      .header-bar {
+        padding: 14px 16px;
+      }
+
+      .desktop-nav {
+        display: none;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .hero {
+        padding: 34px 20px;
+      }
+
+      .tiles,
+      .stats,
+      .explore-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        align-items: start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Marvel-Style Splash Overlay -->
+  <div id="splash-overlay">
+    <!-- Marvel Sound - Re-added with explicit ID -->
+    <audio id="reveal-audio" preload="auto">
+      <source src="music/logo-reveal.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="marvel-flipper">
+      <!-- Logo Reveal Photos -->
+      <img src="images/logo-reveal/20260308_110811.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/344eee6c-a50a-470e-92d8-206bc852bc1d.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260307-WA0002.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260307-WA0004.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0000.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0001.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0002.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0003.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0004.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0005.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0006.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0007.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0008.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0009.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0010.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0011.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0013.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0014.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0015.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0016.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0017.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0018.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0019.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0020.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0021.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0022.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0023.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0024.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG-20260308-WA0025.jpg" class="flicker-photo">
+      <img src="images/logo-reveal/IMG_6660.JPG" class="flicker-photo">
+      <img src="images/logo-reveal/IMG_6661.JPG" class="flicker-photo">
+      <img src="images/logo-reveal/IMG_6664.JPG" class="flicker-photo">
+      <img src="images/logo-reveal/IMG_6666.JPG" class="flicker-photo">
+      <img src="images/logo-reveal/IMG_6671.JPG" class="flicker-photo">
+    </div>
+
+    <!-- Letter by Letter Sequence -->
+    <div class="letter-stage" id="stage-B"><span>B</span></div>
+    <div class="letter-stage" id="stage-E"><span>E</span></div>
+    <div class="letter-stage" id="stage-L"><span>L</span></div>
+    <div class="letter-stage" id="stage-M"><span>M</span></div>
+    <div class="letter-stage" id="stage-O"><span>O</span></div>
+    <div class="letter-stage" id="stage-N"><span>N</span></div>
+    <div class="letter-stage" id="stage-T"><span>T</span></div>
+    <div class="letter-stage" id="stage-S"><span>S</span></div>
+
+    <!-- The Full Word Wrapper -->
+    <div id="full-word-wrapper">
+      <div class="word-letter"><span>B</span></div>
+      <div class="word-letter"><span>E</span></div>
+      <div class="word-letter"><span>L</span></div>
+      <div class="word-letter"><span>M</span></div>
+      <div class="word-letter"><span>O</span></div>
+      <div class="word-letter"><span>N</span></div>
+      <div class="word-letter"><span>T</span></div>
+      <div class="word-letter"><span>S</span></div>
+    </div>
+
+    <!-- Skip Button -->
+    <div id="skip-reveal" onclick="event.stopPropagation(); revealWebsite();">
+      SKIP INTRO
+    </div>
+
+    <!-- Final Full Logo Reveal -->
+    <div id="final-reveal">
+      <div class="reveal-crest-container">
+        <img src="images/belmontslogo.jpg" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      <div class="reveal-crest-title">CREST OF BELMONTS</div>
+      <div class="reveal-crest-tagline">AD MONTEM SAPIENTIAE</div>
+    </div>
+
+    <div style="position: absolute; bottom: 40px; font-family: 'Cinzel'; color: #efc784; opacity: 1; letter-spacing: 0.3em; font-size: 1.2rem; z-index: 10000; cursor: pointer; text-shadow: 0 0 10px #000;" id="start-btn" onclick="initReveal()">
+      CLICK TO ENTER CLAN BELMONT
+    </div>
+  </div>
+
+  <!-- Core Content Wrapper -->
+  <div id="main-content">
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-panel">
+      <header>
+        <strong>Belmont Menu</strong>
+        <button class="mobile-close" type="button" id="mobileClose" aria-label="Close navigation">&times;</button>
+      </header>
+      <nav class="mobile-links">
+        <a href="#top">Home</a>
+        <a href="#vision">Vision</a>
+        <a href="leaders.html">Leaders</a>
+        <a href="members.html">Members</a>
+        <a href="rookies.html">Rookies</a>
+        <a href="weekly-bash-full.html">Weekly Bash</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="page-shell" id="top">
+    <header class="site-header">
+      <div class="header-bar">
+        <a class="brand" href="#top" aria-label="Belmont home">
+          <img src="images/belmontslogo.jpg" alt="Belmont Logo" style="width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(239, 199, 132, 0.4); object-fit: cover;">
+          <span class="brand-copy">
+            <strong>Belmont</strong>
+            <span>Basher Dev Squad, Belmont Edition</span>
+          </span>
+        </a>
+
+        <nav class="desktop-nav" aria-label="Primary navigation">
+          <a href="#vision">Vision</a>
+          <a href="leaders.html">Leaders</a>
+          <a href="members.html">Members</a>
+          <a href="rookies.html">Rookies</a>
+          <a href="weekly-bash-full.html">Weekly Bash</a>
+        </nav>
+
+        <button class="menu-toggle" type="button" id="menuToggle" aria-label="Open navigation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 7h16"></path>
+            <path d="M4 12h16"></path>
+            <path d="M4 17h16"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero reveal">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">Welcome To Belmont</div>
+            <h1>Basher Dev Squad</h1>
+            <p>Belmont is a clan of builders, organizers, and curious minds shaped into a single roster. This version keeps your existing team members but gives the page the same noble, bronze-toned identity as the reference site.</p>
+            <p>Every card below represents a role in the squad, tied to a Belmont-inspired character and a technical domain.</p>
+
+            <div class="hero-actions">
+              <a class="btn primary" href="members.html">View Members</a>
+              <a class="btn secondary" href="#vision">Read The Vision</a>
+            </div>
+
+            <div class="tiles" aria-label="Quick navigation">
+              <a class="tile" href="#vision">
+                <strong>Vision</strong>
+                <span>Purpose and philosophy</span>
+              </a>
+              <a class="tile" href="leaders.html">
+                <strong>Leaders</strong>
+                <span>Core organizers</span>
+              </a>
+              <a class="tile" href="members.html">
+                <strong>Members</strong>
+                <span>Belmont roster</span>
+              </a>
+              <a class="tile" href="rookies.html">
+                <strong>Rookies</strong>
+                <span>New recruits</span>
+              </a>
+            </div>
+          </div>
+
+          <aside class="crest-card reveal">
+            <div class="crest" style="overflow: hidden;">
+              <img src="images/belmontslogo.jpg" alt="Belmont Crest" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">
+            </div>
+            <h2>Clan Of Craft</h2>
+            <p>A Belmont-style interface built around warm parchment, dark bronze panels, ceremonial typography, and a roster-first layout.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="content-section reveal" id="vision">
+        <div class="section-header">
+          <div>
+            <p class="section-kicker">Our Vision</p>
+            <h2 class="section-title">To Build With Curiosity</h2>
+          </div>
+          <p class="section-copy">A roster shaped by craft, inquiry, and technical ambition, presented with the same old-world energy as the Belmont reference.</p>
+        </div>
+
+        <div class="vision-grid">
+          <div class="vision-panel">
+            <p>Where we explore, gain, and impart knowledge to build things that make a difference. A clan that questions everything, looks beyond defaults, and keeps pushing toward better systems, sharper ideas, and stronger execution.</p>
+            <p>We combine modern engineering roles with a mythic visual identity so the page feels more like a guild roster than a plain directory.</p>
+          </div>
+
+          <aside class="quote-panel">
+            <span class="quote-mark">&#8220;</span>
+            <p>Ad Montem Sapientiae. A climb toward wisdom through design, code, experimentation, and collaboration.</p>
+          </aside>
+        </div>
+
+        <div class="stats">
+          <div class="stat-card">
+            <span class="stat-value">23</span>
+            <span class="stat-label">Total Members</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">6</span>
+            <span class="stat-label">Leadership Roles</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">11</span>
+            <span class="stat-label">Rookies</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section reveal" id="explore">
+        <div class="section-header">
+          <div>
+            <p class="section-kicker">Explore</p>
+            <h2 class="section-title">The Clan</h2>
+          </div>
+          <p class="section-copy">Browse the dedicated pages for leaders, members, and the incoming rookies roster.</p>
+        </div>
+
+        <div class="explore-grid">
+          <a class="explore-card" href="leaders.html">
+            <div class="explore-icon" aria-hidden="true">&#9670;</div>
+            <h3>Leaders</h3>
+            <p>Captains, OG captains, and all organizers who steer the Belmont clan.</p>
+            <span class="explore-link">View Leaders &#8594;</span>
+          </a>
+
+          <a class="explore-card" href="members.html">
+            <div class="explore-icon" aria-hidden="true">&#9632;</div>
+            <h3>Members</h3>
+            <p>The active Bashers &mdash; builders, designers, and engineers across every domain.</p>
+            <span class="explore-link">View Members &#8594;</span>
+          </a>
+
+          <a class="explore-card" href="rookies.html">
+            <div class="explore-icon" aria-hidden="true">&#9651;</div>
+            <h3>Rookies</h3>
+            <p>Rookie Bashers (Team of 11) — The newest elite recruits, locked and loaded for battle.</p>
+            <span class="explore-link">View Rookies &#8594;</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer reveal" id="legacy">
+      <div class="mountains" aria-hidden="true"></div>
+      <h2 class="footer-motto">Ad Montem Sapientiae</h2>
+      <p>Belmont since 2024. Basher Dev Squad, Belmont Edition.</p>
+    </footer>
+  </div>
+
+  <script>
+    const mobileMenu = document.getElementById("mobileMenu");
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileClose = document.getElementById("mobileClose");
+    const mobileLinks = mobileMenu.querySelectorAll("a");
+
+    window.onload = () => {
+      // Don't start automatically; wait for user click to enable audio
+    };
+
+    function initReveal() {
+      const startBtn = document.getElementById('start-btn');
+      startBtn.style.display = 'none';
+      startMarvelReveal();
+    }
+
+    // Advanced Marvel Reveal Logic
+    let currentPhotoIndex = 0;
+    const photos = document.querySelectorAll('.flicker-photo');
+    const flipper = document.getElementById('marvel-flipper');
+    const stages = [
+      document.getElementById('stage-B'),
+      document.getElementById('stage-E'),
+      document.getElementById('stage-L'),
+      document.getElementById('stage-M'),
+      document.getElementById('stage-O'),
+      document.getElementById('stage-N'),
+      document.getElementById('stage-T'),
+      document.getElementById('stage-S')
+    ];
+    const finalReveal = document.getElementById('final-reveal');
+
+    // Rapid Flicker System
+    function updateFlicker() {
+      photos.forEach(p => p.classList.remove('active'));
+      currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+      photos[currentPhotoIndex].classList.add('active');
+    }
+
+    let flickerInterval; // Start only on click
+
+    async function startMarvelReveal() {
+      const splashOverlay = document.getElementById('splash-overlay');
+      const mainContent = document.getElementById('main-content');
+      const fullWord = document.getElementById('full-word-wrapper');
+      const revealAudio = document.getElementById('reveal-audio');
+      const skipBtn = document.getElementById('skip-reveal');
+      
+      // Visuals start immediately on click
+      flipper.style.display = 'block';
+      if (skipBtn) skipBtn.style.display = 'block';
+      flickerInterval = setInterval(updateFlicker, 40);
+
+      // Step 1: Individual Letters (Fast Shuffle)
+      for (let i = 0; i < stages.length; i++) {
+        // SUDDEN START AUDIO exactly when the first letter (B) appears
+        if (i === 0 && revealAudio) {
+          revealAudio.currentTime = 0;
+          revealAudio.volume = 1.0; // MAX Volume (100%)
+          revealAudio.play();
+        }
+        
+        stages[i].style.display = 'flex';
+        await new Promise(r => setTimeout(r, 450));
+        stages[i].style.display = 'none';
+      }
+
+      // Step 2: Show Full Word "BELMONTS" (Side-by-side)
+      fullWord.style.display = 'flex';
+      await new Promise(r => setTimeout(r, 1800)); // Hold full word for 1.8s
+      fullWord.style.display = 'none';
+
+      // Step 3: Zoom Out to Final Crest
+      clearInterval(flickerInterval);
+      flipper.style.display = 'none';
+      finalReveal.classList.add('active');
+      finalReveal.style.display = 'flex';
+
+      // Automatically reveal website when the audio finishes
+      if (revealAudio) {
+        revealAudio.onended = () => {
+          revealWebsite();
+        };
+      }
+    }
+
+    function revealWebsite() {
+      const splashOverlay = document.getElementById('splash-overlay');
+      const mainContent = document.getElementById('main-content');
+      const revealAudio = document.getElementById('reveal-audio');
+
+      if (splashOverlay.classList.contains('hidden')) return;
+
+      // Stop Audio on Skip/End
+      if (revealAudio) {
+        // Smoothly fade out the audio
+        const fadeInterval = setInterval(() => {
+          if (revealAudio.volume > 0.1) {
+            revealAudio.volume -= 0.1;
+          } else {
+            revealAudio.pause();
+            revealAudio.currentTime = 0;
+            clearInterval(fadeInterval);
+          }
+        }, 100);
+      }
+
+      splashOverlay.classList.add('hidden');
+      mainContent.classList.add('revealed');
+      
+      setTimeout(() => {
+        splashOverlay.style.display = 'none';
+      }, 1000);
+    }
+
+    function setMenuState(isOpen) {
+      mobileMenu.classList.toggle("open", isOpen);
+      mobileMenu.setAttribute("aria-hidden", String(!isOpen));
+      document.body.style.overflow = isOpen ? "hidden" : "";
+    }
+
+    menuToggle.addEventListener("click", function () {
+      setMenuState(true);
+    });
+
+    mobileClose.addEventListener("click", function () {
+      setMenuState(false);
+    });
+
+    mobileMenu.addEventListener("click", function (event) {
+      if (event.target === mobileMenu) {
+        setMenuState(false);
+      }
+    });
+
+    mobileLinks.forEach(function (link) {
+      link.addEventListener("click", function () {
+        setMenuState(false);
+      });
+    });
+
+    const observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.16 });
+
+    document.querySelectorAll(".reveal").forEach(function (element) {
+      observer.observe(element);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rookies | Belmont Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #d9a65a;
+      --bg-deep: #c28e43;
+      --surface: #4a3421;
+      --surface-soft: #5c4229;
+      --panel: #2f2116;
+      --text-dark: #3c2919;
+      --text-gold: #efc784;
+      --text-ivory: #f7ebcf;
+      --shadow: 0 22px 50px rgba(43, 29, 16, 0.22);
+      --shadow-strong: 0 24px 55px rgba(25, 16, 9, 0.38);
+      --radius-lg: 28px;
+      --radius-sm: 12px;
+      --max-width: 1200px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Cormorant Garamond", serif;
+      color: var(--text-dark);
+      background:
+        radial-gradient(circle at top left, rgba(255, 237, 202, 0.34), transparent 28%),
+        radial-gradient(circle at 85% 14%, rgba(104, 73, 41, 0.18), transparent 22%),
+        linear-gradient(180deg, #e0af63 0%, var(--bg) 38%, var(--bg-deep) 100%);
+      overflow-x: hidden;
+    }
+
+    body::before, body::after {
+      content: ""; position: fixed; width: 320px; height: 320px;
+      border-radius: 50%; pointer-events: none; filter: blur(10px); opacity: 0.28; z-index: 0;
+    }
+    body::before { top: -100px; left: -90px; background: radial-gradient(circle, rgba(247,235,207,0.75), transparent 68%); }
+    body::after { right: -90px; bottom: -120px; background: radial-gradient(circle, rgba(74,52,33,0.42), transparent 72%); }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    .page-shell {
+      position: relative; z-index: 1;
+      width: min(calc(100% - 32px), var(--max-width));
+      margin: 0 auto; padding: 24px 0 48px;
+    }
+
+    /* ── HEADER ── */
+    .site-header { position: sticky; top: 12px; z-index: 30; margin-bottom: 28px; }
+
+    .header-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      padding: 16px 22px; border: 1px solid rgba(247,235,207,0.18); border-radius: 999px;
+      background: rgba(47,33,22,0.88); color: var(--text-gold);
+      box-shadow: var(--shadow); backdrop-filter: blur(10px);
+    }
+
+    .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .brand-mark {
+      width: 48px; height: 48px; flex: 0 0 48px; display: grid; place-items: center;
+      border-radius: 50%; border: 1px solid rgba(239,199,132,0.4);
+      background: radial-gradient(circle at 30% 30%, rgba(247,235,207,0.26), transparent 46%), linear-gradient(145deg, #7b5a36, #3f2a19);
+      font-family: "Cinzel", serif; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.18em;
+    }
+    .brand-copy strong, .brand-copy span { display: block; }
+    .brand-copy strong { font-family: "Cinzel", serif; font-size: 1rem; letter-spacing: 0.18em; text-transform: uppercase; }
+    .brand-copy span { font-size: 0.95rem; color: rgba(247,235,207,0.8); letter-spacing: 0.04em; }
+
+    .desktop-nav { display: flex; align-items: center; gap: 14px; font-size: 1.05rem; letter-spacing: 0.06em; }
+    .desktop-nav a { position: relative; padding: 8px 2px; }
+    .desktop-nav a::after {
+      content: ""; position: absolute; left: 0; bottom: 0;
+      width: 100%; height: 2px; transform: scaleX(0); transform-origin: center;
+      background: var(--text-gold); transition: transform 180ms ease;
+    }
+    .desktop-nav a:hover::after, .desktop-nav a:focus-visible::after, .desktop-nav a[aria-current="page"]::after { transform: scaleX(1); }
+
+    .menu-toggle {
+      display: none; width: 48px; height: 48px; border: 0; border-radius: 50%;
+      background: rgba(239,199,132,0.12); color: var(--text-gold); cursor: pointer;
+    }
+    .menu-toggle svg { width: 24px; height: 24px; margin: auto; display: block; }
+
+    .mobile-menu { position: fixed; inset: 0; display: none; place-items: center; padding: 20px; background: rgba(24,16,10,0.82); z-index: 40; }
+    .mobile-menu.open { display: grid; }
+    .mobile-panel { width: min(100%, 360px); padding: 24px; border-radius: var(--radius-lg); background: var(--panel); color: var(--text-gold); box-shadow: var(--shadow-strong); border: 1px solid rgba(239,199,132,0.18); }
+    .mobile-panel header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .mobile-panel strong { font-family: "Cinzel", serif; letter-spacing: 0.18em; text-transform: uppercase; }
+    .mobile-close { border: 0; background: transparent; color: inherit; font-size: 1.8rem; cursor: pointer; line-height: 1; }
+    .mobile-links { display: grid; gap: 12px; }
+    .mobile-links a { padding: 14px 16px; border-radius: var(--radius-sm); background: rgba(239,199,132,0.08); border: 1px solid rgba(239,199,132,0.08); font-family: "Cinzel", serif; letter-spacing: 0.06em; }
+
+    /* ── PAGE INTRO ── */
+    .page-intro {
+      padding: 54px clamp(22px, 5vw, 64px); border-radius: 36px;
+      background: linear-gradient(135deg, rgba(255,239,213,0.22), transparent 30%), linear-gradient(180deg, rgba(74,52,33,0.92) 0%, rgba(47,33,22,0.96) 100%);
+      color: var(--text-gold); box-shadow: var(--shadow-strong); text-align: center;
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px; margin-bottom: 18px;
+      padding: 8px 14px; border-radius: 999px; background: rgba(239,199,132,0.12);
+      font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .eyebrow::before, .eyebrow::after { content: ""; width: 28px; height: 1px; background: rgba(239,199,132,0.48); }
+    .page-intro h1 { margin: 0 0 14px; font-family: "Cinzel", serif; font-size: clamp(2.4rem, 5vw, 4rem); letter-spacing: 0.08em; text-transform: uppercase; }
+    .page-intro p { margin: 0 auto; font-size: clamp(1.15rem, 2vw, 1.35rem); line-height: 1.55; color: rgba(247,235,207,0.88); max-width: 56ch; }
+
+    /* ── COMING SOON PANEL ── */
+    .coming-soon-section {
+      margin-top: 28px;
+      padding: clamp(50px, 8vw, 100px) clamp(24px, 5vw, 60px);
+      border-radius: 34px;
+      background: rgba(255,245,224,0.5);
+      border: 1px solid rgba(60,41,25,0.08);
+      box-shadow: var(--shadow);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .coming-soon-crest {
+      width: 120px;
+      height: 120px;
+      display: grid;
+      place-items: center;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(247,235,207,0.25), transparent 36%),
+        linear-gradient(145deg, #6c4b2c, #2d1d12);
+      border: 1px solid rgba(239,199,132,0.22);
+      font-family: "Cinzel", serif;
+      font-size: 2.4rem;
+      color: var(--text-gold);
+      letter-spacing: 0.1em;
+    }
+
+    .coming-soon-section h2 {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dark);
+    }
+
+    .coming-soon-section p {
+      margin: 0;
+      font-size: clamp(1.1rem, 2vw, 1.3rem);
+      line-height: 1.6;
+      color: rgba(60,41,25,0.80);
+      max-width: 48ch;
+    }
+
+    /* pulsing dots loader for "coming soon" feel */
+    .dots {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(60,41,25,0.3);
+      animation: dot-pulse 1.4s ease-in-out infinite;
+    }
+
+    .dots span:nth-child(2) { animation-delay: 0.2s; }
+    .dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes dot-pulse {
+      0%, 80%, 100% { transform: scale(1); opacity: 0.3; }
+      40% { transform: scale(1.4); opacity: 1; }
+    }
+
+    .coming-soon-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 26px;
+      border-radius: 14px;
+      border: 1px solid rgba(60,41,25,0.18);
+      background: rgba(60,41,25,0.07);
+      font-family: "Cinzel", serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .coming-soon-cta:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(24,16,10,0.14); }
+
+    /* ── MEMBERS GRID ── */
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .member-card {
+      border-radius: 24px;
+      background: #000000; /* Pure Black Background */
+      color: #ffffff; /* Pure White Text */
+      border: 1px solid rgba(255,255,255,0.1);
+      overflow: hidden;
+      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 300ms ease;
+    }
+
+    .member-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .member-card-inner { 
+      display: grid; 
+      grid-template-columns: 180px minmax(0, 1fr); 
+      position: relative;
+    }
+
+    .member-card img {
+      width: 180px;
+      height: 100%;
+      min-height: 240px;
+      object-fit: cover;
+      background: #111;
+    }
+
+    .member-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      background: #000000 !important; /* Pure Black Body */
+    }
+
+    .member-body > * { 
+      position: relative; 
+      z-index: 2000 !important; /* Ensure text is above effect (z-index 1000) */
+    }
+
+    /* ── CHARACTER PNG EFFECTS (HIGH VISIBILITY TOP LAYER) ── */
+    .aura-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000 !important; /* Force to absolute top */
+      opacity: 0;
+      visibility: hidden; /* Ensure it stays hidden when not hovered */
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      background-size: cover !important; /* Force cover to see the image better */
+      background-position: center !important;
+      background-repeat: no-repeat !important;
+      background-color: transparent !important;
+    }
+
+    .member-card:hover .aura-overlay {
+      opacity: 1 !important;
+      visibility: visible !important;
+      animation: metallic-glow-pulse 1.5s infinite alternate ease-in-out !important;
+    }
+
+    @keyframes metallic-glow-pulse {
+      0% { filter: brightness(1) drop-shadow(0 0 10px rgba(255,255,255,0.8)); transform: scale(1); }
+      100% { filter: brightness(1.5) drop-shadow(0 0 30px rgba(255,255,255,1)); transform: scale(1.02); }
+    }
+
+    /* Character PNG Effects */
+    .aura-lightning { background-image: url('images/fx-lightning.png') !important; background-color: rgba(0, 0, 0, 0.85) !important; color: white !important; }
+    .aura-fire      { background-image: url('images/fx-fire.png') !important; background-color: rgba(0, 0, 0, 0.85) !important; color: white !important; }
+    .aura-gold      { background-image: url('images/fx-gold.png') !important; background-color: rgba(0, 0, 0, 0.85) !important; color: white !important; }
+    .aura-shadow    { background-image: url('images/1.jpg') !important; }
+    .aura-digital   { background-image: url('images/1.png') !important; }
+    .aura-infinity  { background-image: url('images/infinitepng.jpg') !important; }
+    .aura-pink      { background-image: url('images/fx-pink.png') !important; }
+    .aura-soft      { background-image: url('images/fx-soft.png') !important; }
+    .aura-deduction { background-image: url('images/a1.jpg') !important; }
+    .aura-system    { background-image: url('images/1.jpg') !important; }
+
+    /* Remove the duplicate/old definitions from earlier steps */
+    .member-body > * { 
+      position: relative; 
+      z-index: 2000 !important; 
+    }
+
+    .role-tag {
+      display: inline-flex; align-items: center;
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.9);
+      font-family: "Cinzel", serif; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    .member-body h3 {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .member-divider {
+      border: none;
+      border-top: 1px solid rgba(60,41,25,0.14);
+      margin: 0;
+    }
+
+    .member-body p {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.7); /* White muted text */
+    }
+
+    .member-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 10px;
+    }
+
+    .meta-chip {
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.2);
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+    }
+
+    /* ── REVEAL ── */
+    .reveal { 
+      opacity: 0; 
+      transform: translateY(40px) scale(0.95); 
+      transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1), transform 800ms cubic-bezier(0.16, 1, 0.3, 1); 
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+    .member-card {
+      border-radius: 24px;
+      background: rgba(255,250,239,0.62);
+      border: 1px solid rgba(60,41,25,0.08);
+      overflow: hidden;
+      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 300ms ease;
+      /* Staggered entry animation */
+      perspective: 1000px;
+    }
+
+    .member-card.visible {
+      animation: rookie-entry 1s cubic-bezier(0.17, 0.67, 0.83, 0.67) both;
+    }
+
+    @keyframes rookie-entry {
+      0% { opacity: 0; transform: rotateY(-15deg) translateY(50px); }
+      100% { opacity: 1; transform: rotateY(0) translateY(0); }
+    }
+
+    .member-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 30px 60px rgba(24,16,10,0.3);
+      background: rgba(255,252,245,0.85);
+      border-color: var(--bg-deep);
+    }
+
+    /* ── CHARACTER AURAS ── */
+    .aura-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      background-size: cover;
+      mix-blend-mode: screen;
+    }
+
+    .member-card:hover .aura-overlay {
+      opacity: 0.8;
+    }
+
+    /* Lightning for Zenitsu */
+    .aura-lightning {
+      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 100, 0.4) 0%, transparent 70%);
+      box-shadow: inset 0 0 50px rgba(255, 255, 0, 0.5);
+      animation: lightning-flicker 0.2s infinite;
+    }
+
+    /* Shadow/Dark for Megumi & Ayanokoji */
+    .aura-shadow {
+      background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.6) 0%, transparent 80%);
+      animation: shadow-drift 3s infinite ease-in-out;
+    }
+
+    /* Digital/Blue for Kirito & Jinwoo */
+    .aura-digital {
+      background: repeating-linear-gradient(0deg, transparent, rgba(0, 150, 255, 0.2) 2px, transparent 4px);
+      box-shadow: inset 0 0 60px rgba(0, 200, 255, 0.4);
+    }
+
+    /* Fire for Rengoku */
+    .aura-fire {
+      background: radial-gradient(circle at 50% 90%, rgba(255, 69, 0, 0.5) 0%, transparent 60%);
+      animation: flame-pulse 0.5s infinite alternate;
+    }
+
+    /* Infinity/Purple for Gojo */
+    .aura-infinity {
+      background: radial-gradient(circle at 50% 50%, rgba(147, 112, 219, 0.4) 0%, transparent 70%);
+      box-shadow: inset 0 0 40px rgba(75, 0, 130, 0.3);
+      animation: infinity-expand 4s infinite alternate ease-in-out;
+    }
+
+    /* Power/Gold for Goku */
+    .aura-gold {
+      background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+      filter: blur(5px);
+      animation: gold-surge 0.5s infinite alternate;
+    }
+
+    /* Pink/Petal for Nezuko */
+    .aura-pink {
+      background-image: radial-gradient(circle at 50% 50%, rgba(255, 182, 193, 0.2) 0%, transparent 70%);
+      animation: petal-fall 3s infinite linear;
+    }
+
+    /* Musical/Soft for Mio */
+    .aura-soft {
+      background-image: radial-gradient(circle at 50% 50%, rgba(245, 245, 245, 0.3) 0%, transparent 70%);
+      animation: note-float 2s infinite ease-in-out;
+    }
+
+    /* Deduction/Blue for Oreki */
+    .aura-deduction {
+      background-image: url('images/a.jpg');
+      background-size: cover;
+      background-position: center;
+      mix-blend-mode: normal;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Leveling/System for Jinwoo */
+    .aura-system {
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, transparent 50%);
+      box-shadow: inset 0 -20px 40px rgba(80, 0, 255, 0.4);
+      animation: system-rise 2s infinite;
+    }
+
+    @keyframes lightning-flicker {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+      52% { opacity: 0.2; }
+      54% { opacity: 1; filter: brightness(2); }
+    }
+
+    @keyframes flame-pulse {
+      0% { transform: scale(1); opacity: 0.3; filter: hue-rotate(0deg); }
+      100% { transform: scale(1.2); opacity: 0.7; filter: hue-rotate(20deg); }
+    }
+
+    @keyframes gold-surge {
+      0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); transform: scale(1); }
+      100% { box-shadow: 0 0 60px rgba(255, 215, 0, 0.6); transform: scale(1.1); }
+    }
+
+    @keyframes shadow-drift {
+      0%, 100% { filter: blur(10px); transform: translate(0, 0); }
+      50% { filter: blur(25px); transform: translate(-10px, 10px) scale(1.1); }
+    }
+
+    @keyframes infinity-expand {
+      0% { transform: scale(0.8); opacity: 0.2; }
+      100% { transform: scale(1.3); opacity: 0.5; }
+    }
+
+    @keyframes petal-fall {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 0% 100%; }
+    }
+
+    @keyframes note-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    @keyframes crystal-glint {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.7; filter: brightness(1.5); }
+    }
+
+    @keyframes system-rise {
+      0% { background-position: 0% 100%; }
+      100% { background-position: 0% 0%; }
+    }
+
+    .site-footer { position: relative; margin-top: 34px; padding: 48px 24px 30px; text-align: center; color: var(--text-dark); }
+    .mountains { position: relative; height: 86px; margin-bottom: 20px; overflow: hidden; }
+    .mountains::before, .mountains::after {
+      content: ""; position: absolute; inset: auto 0 0; height: 86px;
+      background: linear-gradient(180deg, transparent, rgba(60,41,25,0.08));
+      clip-path: polygon(0 100%, 10% 52%, 20% 100%, 33% 36%, 46% 100%, 58% 46%, 70% 100%, 84% 28%, 100% 100%);
+    }
+    .mountains::after { opacity: 0.5; transform: scaleY(0.72) translateY(12px); }
+    .footer-motto { margin: 0 0 10px; font-family: "Cinzel", serif; font-size: clamp(1rem, 2vw, 1.2rem); letter-spacing: 0.16em; text-transform: uppercase; }
+    .site-footer p { margin: 0; font-size: 1.06rem; letter-spacing: 0.04em; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .members-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .page-shell { padding-top: 12px; }
+      .desktop-nav { display: none; }
+      .menu-toggle { display: block; }
+      .member-card-inner { grid-template-columns: 1fr; }
+      .member-card img { width: 100%; height: 200px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-panel">
+      <header>
+        <strong>Belmont Menu</strong>
+        <button class="mobile-close" type="button" id="mobileClose" aria-label="Close navigation">&times;</button>
+      </header>
+      <nav class="mobile-links">
+        <a href="index.html">Home</a>
+        <a href="leaders.html">Leaders</a>
+        <a href="members.html">Members</a>
+        <a href="rookies.html">Rookies</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="header-bar">
+        <a class="brand" href="index.html" aria-label="Belmont home">
+          <img src="images/belmontslogo.jpg" alt="Belmont Logo" style="width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(239,199,132,0.4); object-fit: cover;">
+          <span class="brand-copy">
+            <strong>Belmont</strong>
+            <span>Basher Dev Squad</span>
+          </span>
+        </a>
+
+        <nav class="desktop-nav" aria-label="Primary navigation">
+          <a href="index.html">Home</a>
+          <a href="leaders.html">Leaders</a>
+          <a href="members.html">Members</a>
+          <a href="rookies.html" aria-current="page">Rookies</a>
+        </nav>
+
+        <button class="menu-toggle" type="button" id="menuToggle" aria-label="Open navigation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+      <div class="page-intro reveal">
+        <div class="eyebrow">Rookie Bashers</div>
+        <h1>New Recruits</h1>
+        <p>The newest members of the Belmont clan — joining the pursuit of craft, curiosity, and collaboration.</p>
+        
+        <!-- Rookie Weekly Bash Button -->
+        <div style="margin-top: 32px;">
+          <a href="weekly-bash.html" class="rookie-bash-btn">
+            <span class="bash-icon">⚔️</span>
+            Rookie Weekly Bash
+          </a>
+        </div>
+      </div>
+
+      <style>
+        .rookie-bash-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          padding: 16px 32px;
+          border-radius: 16px;
+          background: linear-gradient(145deg, #efc784, #d9a65a);
+          color: #2f2116 !important;
+          font-family: "Cinzel", serif;
+          font-weight: 700;
+          font-size: 1.1rem;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          text-decoration: none;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .rookie-bash-btn:hover {
+          transform: translateY(-5px) scale(1.05);
+          box-shadow: 0 15px 35px rgba(217, 166, 90, 0.4);
+          background: linear-gradient(145deg, #f7ebcf, #efc784);
+        }
+
+        .bash-icon {
+          font-size: 1.4rem;
+          filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+      </style>
+
+      <div class="members-grid" style="margin-top: 28px;">
+        <!-- member 1 -->
+        <article class="member-card reveal">
+          <div class="member-card-inner">
+            <img src="images/megumi.jpg" alt="Megumi Fushiguro">
+            <div class="member-body">
+              <div class="aura-overlay aura-shadow"></div>
+              <span class="role-tag">AI & ML Rookie</span>
+              <h3>Arock Jeberson*</h3>
+              <p>Megumi Fushiguro (Jujutsu Kaisen)</p>
+              <div class="member-meta">
+                <span class="meta-chip">Squad Basher</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- member 2 -->
+        <article class="member-card reveal">
+          <div class="member-card-inner">
+            <img src="images/kirito.jpg" alt="Kirito">
+            <div class="member-body">
+              <div class="aura-overlay aura-digital"></div>
+              <span class="role-tag">Game Developer Rookie</span>
+              <h3>Sivasankar*</h3>
+              <p>Kirigaya Kazuto (Kirito) (Sword Art Online)</p>
+              <div class="member-meta">
+                <span class="meta-chip">Squad Basher</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- member 3 -->
+        <article class="member-card reveal" style="background: #111; color: #eee; border-color: #333;">
+          <div class="member-card-inner">
+            <img src="images/rengoku.jpg" alt="Kyojuro Rengoku">
+            <div class="member-body">
+              <div class="aura-overlay aura-fire"></div>
+              <span class="role-tag" style="background: rgba(255,69,0,0.2); color: #ffab40;">Game Developer Rookie</span>
+              <h3>Bose*</h3>
+              <p style="color: #ccc;">Kyojuro Rengoku (Demon Slayer)</p>
+              <div class="member-meta">
+                <span class="meta-chip" style="border-color: #444;">Squad Basher</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- member 4 -->
+        <article class="member-card reveal">
+          <div class="member-card-inner">
+            <img src="images/a.jpg" alt="Houtarou Oreki">
+            <div class="member-body">
+              <div class="aura-overlay aura-deduction"></div>
+              <span class="role-tag">DevOps Rookie</span>
+              <h3>Vignesh*</h3>
+              <p>Houtarou Oreki (Hyouka)</p>
+              <div class="member-meta">
+                <span class="meta-chip">Squad Basher</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- member 5 -->
+        <article class="member-card reveal">
+          <div class="member-card-inner">
+            <img src="images/gojo.jpg" alt="Gojo Satoru">
+            <div class="member-body">
+              <div class="aura-overlay aura-infinity"></div>
+              <span class="role-tag">Full-stack Developer Rookie</span>
+              <h3>Jashwin*</h3>
+              <p>Gojo Satoru (Jujutsu Kaisen)</p>
+              <div class="member-meta">
+                <span class="meta-chip">Squad Basher</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- member 6 -->
+        <article class="member-card reveal" style="background: #111; color: #eee; border-color: #333;">
+          <div class="member-card-inner">
+            <img src="images/goku.jpg" alt="Son Goku">
+            <div class="member-body">
+              <div class="aura-overlay aura-gold"></div>
+              <span class="role-tag" style="background: rgba(255,215,0,0.2); color: #ffd700;">App Developer Rookie</span>
+              <h3>Muhamed Zarif*</h3>
+              <p style="color: #ccc;">Son Goku (Dragon Ball)</p>
+              <div class="member-meta">
+                <span class="meta-chip" style="border-color: #444;">Squad Basher</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- member 7 -->
+        <article class="member-card reveal">
+          <div class="member-card-inner">
+            <img src="images/ayanokoji.jpg" alt="Ayanokoji Kiyotaka">
+            <div class="member-body">
+              <div class="aura-overlay aura-shadow"></div>
+              <span class="role-tag">Cyber Security Rookie</span>
+              <h3>Dharshan*</h3>
+              <p>Ayanokoji Kiyotaka (Classroom of the Elite)</p>
+              <div class="member-meta">
+                <span class="meta-chip">Squad Basher</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- member 8 -->
+        <article class="member-card reveal">
+          <div class="member-card-inner">
+            <img src="images/jinwoo.jpg" alt="Sung Jin-Woo">
+            <div class="member-body">
+              <div class="aura-overlay aura-system"></div>
+              <span class="role-tag">Full-stack Developer Rookie</span>
+              <h3>Shane Hicks*</h3>
+              <p>Sung Jin-Woo (Solo Leveling)</p>
+              <div class="member-meta">
+                <span class="meta-chip">Squad Basher</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- member 9 -->
+        <article class="member-card reveal" style="background: #111; color: #eee; border-color: #333;">
+          <div class="member-card-inner">
+            <img src="images/zenitsu.jpg" alt="Zenitsu Agatsuma">
+            <div class="member-body">
+              <div class="aura-overlay aura-lightning"></div>
+              <span class="role-tag" style="background: rgba(255,255,0,0.15); color: #ffff8d;">Game Developer Rookie</span>
+              <h3>Shaber Mohamed*</h3>
+              <p style="color: #ccc;">Zenitsu Agatsuma (Demon Slayer)</p>
+              <div class="member-meta">
+                <span class="meta-chip" style="border-color: #444;">Squad Basher</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- member 10 -->
+        <article class="member-card reveal">
+          <div class="member-card-inner">
+            <img src="images/nezuko.jpg" alt="Nezuko Kamado">
+            <div class="member-body">
+              <div class="aura-overlay aura-pink"></div>
+              <span class="role-tag">Data Analyst Rookie</span>
+              <h3>Haajira Mufliha*</h3>
+              <p>Nezuko Kamado (Demon Slayer)</p>
+              <div class="member-meta">
+                <span class="meta-chip">Squad Basher</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- member 11 -->
+        <article class="member-card reveal">
+          <div class="member-card-inner">
+            <img src="images/mio.jpg" alt="Mio Akiyama">
+            <div class="member-body">
+              <span class="role-tag">App Developer Rookie</span>
+              <div class="aura-overlay aura-soft"></div>
+              <h3>Sushmitha*</h3>
+              <p>Mio Akiyama (K-ON!)</p>
+              <div class="member-meta">
+                <span class="meta-chip">Squad Basher</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+      </div>
+    </main>
+
+    <footer class="site-footer reveal">
+      <div class="mountains" aria-hidden="true"></div>
+      <h2 class="footer-motto">Ad Montem Sapientiae</h2>
+      <p>Belmont since 2024. Basher Dev Squad, Belmont Edition.</p>
+    </footer>
+  </div>
+
+  <script>
+    const mobileMenu = document.getElementById("mobileMenu");
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileClose = document.getElementById("mobileClose");
+    const mobileLinks = mobileMenu.querySelectorAll("a");
+
+    function setMenuState(isOpen) {
+      mobileMenu.classList.toggle("open", isOpen);
+      mobileMenu.setAttribute("aria-hidden", String(!isOpen));
+      document.body.style.overflow = isOpen ? "hidden" : "";
+    }
+
+    menuToggle.addEventListener("click", () => setMenuState(true));
+    mobileClose.addEventListener("click", () => setMenuState(false));
+    mobileMenu.addEventListener("click", e => { if (e.target === mobileMenu) setMenuState(false); });
+    mobileLinks.forEach(link => link.addEventListener("click", () => setMenuState(false)));
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

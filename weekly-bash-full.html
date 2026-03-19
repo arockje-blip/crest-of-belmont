@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weekly Bash Chronicles | Belmont Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #d9a65a;
+      --bg-deep: #c28e43;
+      --surface: #4a3421;
+      --surface-soft: #5c4229;
+      --panel: #2f2116;
+      --text-dark: #3c2919;
+      --text-gold: #efc784;
+      --text-ivory: #f7ebcf;
+      --shadow: 0 22px 50px rgba(43, 29, 16, 0.22);
+      --accent-purple: #bc6ff1;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: "Cormorant Garamond", serif;
+      color: var(--text-dark);
+      background:
+        radial-gradient(circle at top left, rgba(255, 237, 202, 0.34), transparent 28%),
+        linear-gradient(180deg, #e0af63 0%, var(--bg) 38%, var(--bg-deep) 100%);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 60px 20px;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      width: min(100%, 1000px);
+      text-align: center;
+    }
+
+    .header-main {
+      margin-bottom: 60px;
+    }
+
+    .header-main h1 {
+      margin: 0; font-family: "Cinzel", serif; font-size: clamp(2.5rem, 6vw, 4.5rem);
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--panel);
+      text-shadow: 2px 2px 0px rgba(255,255,255,0.2);
+    }
+
+    /* ── STICKY NAV ── */
+    .week-nav-sticky {
+      position: sticky;
+      top: 20px;
+      z-index: 100;
+      background: var(--panel);
+      padding: 10px;
+      border-radius: 50px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 60px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      flex-wrap: wrap;
+      border: 1px solid var(--text-gold);
+    }
+
+    .nav-dot {
+      text-decoration: none;
+      color: var(--text-ivory);
+      font-family: "Cinzel", serif;
+      font-size: 0.8rem;
+      padding: 8px 15px;
+      border-radius: 25px;
+      transition: all 0.3s;
+    }
+
+    .nav-dot:hover, .nav-dot.active {
+      background: var(--text-gold);
+      color: var(--panel);
+    }
+
+    /* ── WEEK SECTIONS ── */
+    .week-section {
+      padding: 80px 0;
+      border-bottom: 2px solid rgba(47, 33, 22, 0.1);
+      margin-bottom: 40px;
+    }
+
+    .week-section:last-child { border-bottom: none; }
+
+    .week-header {
+      margin-bottom: 40px;
+    }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px; margin-bottom: 18px;
+      padding: 8px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.15);
+      font-family: "Cinzel", serif; font-size: 0.9rem; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
+    .week-header h2 {
+      margin: 0; font-family: "Cinzel", serif; font-size: clamp(2rem, 5vw, 3.5rem);
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--panel);
+    }
+
+    .clan-logo-header {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid var(--panel);
+      margin: 20px 0;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    .motto {
+      font-family: "Cinzel", serif;
+      font-style: italic;
+      color: var(--surface);
+      margin: 15px 0 30px;
+      font-size: 1.1rem;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      position: relative;
+      margin: 40px auto;
+      padding: 20px 0;
+      text-align: left;
+      max-width: 700px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 31px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--panel);
+      opacity: 0.3;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 30px;
+      padding-left: 80px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: 20px;
+      top: 5px;
+      width: 24px;
+      height: 24px;
+      background: var(--panel);
+      border-radius: 50%;
+      border: 4px solid var(--text-ivory);
+      z-index: 2;
+    }
+
+    .timeline-content {
+      background: var(--panel);
+      color: var(--text-ivory);
+      padding: 20px 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .timeline-time {
+      font-family: "Cinzel", serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      color: var(--text-gold);
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .timeline-title {
+      font-family: "Cinzel", serif;
+      font-size: 1.25rem;
+      margin: 0;
+      letter-spacing: 0.05em;
+    }
+
+    .timeline-desc {
+      font-size: 1.05rem;
+      margin-top: 5px;
+      opacity: 0.85;
+      line-height:1.4;
+    }
+
+    /* ── WEEK 7 SPECIFIC OVERRIDE ── */
+    .week-dark {
+      background: #121212;
+      color: #fff;
+      margin: 40px -20px;
+      padding: 80px 20px;
+      border-radius: 30px;
+      border: 2px solid var(--accent-purple);
+    }
+    .week-dark h2 { color: var(--accent-purple) !important; }
+    .week-dark .timeline::before { background: var(--accent-purple); }
+    .week-dark .timeline-dot { background: var(--accent-purple); border-color: #121212; }
+    .week-dark .timeline-content { background: #1e1e1e; border: 1px solid rgba(188, 111, 241, 0.2); }
+    .week-dark .timeline-time { color: var(--accent-purple); }
+
+    /* ── GALLERY ── */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 40px;
+    }
+
+    .gallery-item {
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      border-radius: 12px;
+      background: var(--panel);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .gallery-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.5s;
+    }
+
+    .gallery-item:hover img { transform: scale(1.1); }
+
+    .back-link {
+      margin: 60px 0;
+      display: inline-block;
+      color: var(--panel);
+      font-family: "Cinzel", serif;
+      text-decoration: none;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .back-link:hover { border-bottom-color: var(--panel); transform: translateX(-5px); }
+
+    @media (max-width: 600px) {
+      .week-nav-sticky { top: 10px; border-radius: 15px; }
+      .timeline-item { padding-left: 60px; }
+      .timeline::before { left: 21px; }
+      .timeline-dot { left: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header-main">
+      <h1>Weekly Bash Chronicles</h1>
+      <p>A Complete Record of Our Journey</p>
+    </header>
+
+    <nav class="week-nav-sticky">
+      <a href="#week1" class="nav-dot">W1</a>
+      <a href="#week2" class="nav-dot">W2</a>
+      <a href="#week3" class="nav-dot">W3</a>
+      <a href="#week4" class="nav-dot">W4</a>
+      <a href="#week5" class="nav-dot">W5</a>
+      <a href="#week6" class="nav-dot">W6</a>
+      <a href="#week7" class="nav-dot">W7</a>
+    </nav>
+
+    <!-- ── WEEK 1 ── -->
+    <section id="week1" class="week-section">
+      <div class="week-header">
+        <div class="eyebrow">Clan Events | 31 Jan 2026</div>
+        <h2>Rookie Weekly Bash</h2>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">9:30 – 10:00</span> <h3 class="timeline-title">RWB Setup</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">10:00 – 10:15</span> <h3 class="timeline-title">Community Intro</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">10:15 – 10:30</span> <h3 class="timeline-title">Aura 7F Intro</h3> <p class="timeline-desc">Introduced by Shaniya</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">10:30 – 10:45</span> <h3 class="timeline-title">Belmonts Intro</h3> <p class="timeline-desc">Introduced by Shriharshini</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">10:45 – 11:00</span> <h3 class="timeline-title">Lumina Intro</h3> <p class="timeline-desc">Introduced by Ajisha</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">11:00 – 11:15</span> <h3 class="timeline-title">Shadastria Adepti Intro</h3> <p class="timeline-desc">Introduced by Dhaanu</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">11:25 – 12:20</span> <h3 class="timeline-title">Rookie Selection</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">12:20 – 12:30</span> <h3 class="timeline-title">BB Tech Intro</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">12:30 – 1:15</span> <h3 class="timeline-title">Lunch Break</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">1:15 – 1:45</span> <h3 class="timeline-title">Cognitive Clock</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">1:45 – 2:30</span> <h3 class="timeline-title">IQ Royale</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">2:30 – 2:45</span> <h3 class="timeline-title">Conclusion + $$</h3> </div> </div>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="images/w b media/rookies/IMG-20260131-WA0020.jpg" alt="Rookie Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/rookies/IMG-20260131-WA0024.jpg" alt="Rookie Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/rookies/IMG-20260308-WA0043.jpg" alt="Rookie Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/rookies/IMG-20260308-WA0057.jpg" alt="Rookie Bash"></div>
+      </div>
+    </section>
+
+    <!-- ── WEEK 2 ── -->
+    <section id="week2" class="week-section">
+      <div class="week-header">
+        <div class="eyebrow">Clan Events | Lumina Edition</div>
+        <img src="images/lumina.jpg" alt="Lumina Logo" class="clan-logo-header">
+        <h2>Weekly Bash - Lumina</h2>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">9:30 AM</span> <h3 class="timeline-title">Setting Up</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">10:00 – 11:30 AM</span> <h3 class="timeline-title">Programming Session</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">11:30 – 12:15 PM</span> <h3 class="timeline-title">Gitstart</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">12:15 – 1:00 PM</span> <h3 class="timeline-title">Lunch Break</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">1:15 – 2:00 PM</span> <h3 class="timeline-title">Shuffle Relay</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">2:00 – 2:45 PM</span> <h3 class="timeline-title">Accura See</h3> </div> </div>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="images/w b media/lumina/IMG-20260308-WA0142.jpg" alt="Lumina Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/lumina/IMG-20260308-WA0157.jpg" alt="Lumina Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/lumina/IMG-20260308-WA0162.jpg" alt="Lumina Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/lumina/IMG-20260308-WA0181.jpg" alt="Lumina Bash"></div>
+      </div>
+    </section>
+
+    <!-- ── WEEK 3 ── -->
+    <section id="week3" class="week-section">
+      <div class="week-header">
+        <div class="eyebrow">Clan Events | 14 Feb 2026</div>
+        <img src="images/adepti.jpg" alt="Adepti Logo" class="clan-logo-header">
+        <h2>Weekly Bash - Shadastria Adepti</h2>
+        <p class="motto">"Per Umbras Celamus, Per Astra Ducimus"</p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">10:00 AM – 11:30 AM</span> <h3 class="timeline-title">Competitive Program</h3> <p class="timeline-desc">Guided by Anjai and Anish</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">11:30 AM – 12:15 PM</span> <h3 class="timeline-title">Break The Box</h3> <p class="timeline-desc">Guided by Sriram and Anjai</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">12:15 PM – 1:00 PM</span> <h3 class="timeline-title">Lunch Break</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">1:15 PM – 2:00 PM</span> <h3 class="timeline-title">Byte Size Battles</h3> <p class="timeline-desc">Guided by Danu Peter and Abishake</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">2:00 PM – 2:45 PM</span> <h3 class="timeline-title">Freshie Panic</h3> <p class="timeline-desc">Guided by Muhilan Raj and Dhanush</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">2:45 PM – 3:00 PM</span> <h3 class="timeline-title">Feedback</h3> </div> </div>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="images/w b media/adepti/IMG-20260228-WA0011.jpg" alt="Adepti Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/adepti/IMG-20260228-WA0022.jpg" alt="Adepti Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/adepti/IMG-20260228-WA0026.jpg" alt="Adepti Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/adepti/IMG-20260228-WA0029.jpg" alt="Adepti Bash"></div>
+      </div>
+    </section>
+
+    <!-- ── WEEK 4 ── -->
+    <section id="week4" class="week-section">
+      <div class="week-header">
+        <div class="eyebrow">Weekly Bash 04</div>
+        <img src="images/w b media/bellbash.jpg" alt="Bel-Bash Logo" class="clan-logo-header">
+        <h2>Weekly Bash - Bel-Bash</h2>
+        <p class="motto">Reflect. Master. Compete. Play.</p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">Rookies' Reflection Forum</span> <h3 class="timeline-title">The Path of Growth</h3> <p class="timeline-desc">Balanced academics and club work. Moderated by Captain Bashers.</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">Blockchain Mastery — Part II</span> <h3 class="timeline-title">The Digital Ledger</h3> <p class="timeline-desc">Deep dive into real-world use cases by Basher Samuel.</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">The Intellect Arena</span> <h3 class="timeline-title">The Scholar's Duel</h3> <p class="timeline-desc">Knowledge and quick thinking quiz led by Basher Geo.</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">Nexus Play</span> <h3 class="timeline-title">The Grand Alliance</h3> <p class="timeline-desc">Interactive bonding and gaming session with Basher Aadhithya.</p> </div> </div>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="gallery-item" style="aspect-ratio: 16/9; grid-column: span 2;"><img src="images/w b media/bel-bash.png" alt="Bel-Bash Banner"></div>
+      </div>
+    </section>
+
+    <!-- ── WEEK 5 ── -->
+    <section id="week5" class="week-section">
+      <div class="week-header">
+        <div class="eyebrow">Clan Events | 28 Feb 2026</div>
+        <img src="images/aura.jpg" alt="Aura Logo" class="clan-logo-header">
+        <h2>Weekly Bash - Aura 7F</h2>
+        <p class="motto">"Behind The Click"</p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">10:00 AM – 10:30 AM</span> <h3 class="timeline-title">Blue Print</h3> <p class="timeline-desc">Guided by Shaily & Anitus</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">10:30 AM – 12:30 PM</span> <h3 class="timeline-title">Blockpop</h3> <p class="timeline-desc">Guided by Lifnan & Archana</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">12:30 PM – 1:20 PM</span> <h3 class="timeline-title">Lunch break</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">1:20 PM – 2:00 PM</span> <h3 class="timeline-title">Control The Game</h3> <p class="timeline-desc">Guided by Arthi & Shaniya</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">2:00 PM – 2:40 PM</span> <h3 class="timeline-title">Level Up Live</h3> <p class="timeline-desc">Guided by Alisha & Beule</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">2:40 PM – 3:00 PM</span> <h3 class="timeline-title">Conclusion</h3> </div> </div>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="images/w b media/aura/IMG_1089.JPG" alt="Aura Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/aura/IMG_1090.JPG" alt="Aura Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/aura/IMG_1102.JPG" alt="Aura Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/aura/IMG_1108.JPG" alt="Aura Bash"></div>
+      </div>
+    </section>
+
+    <!-- ── WEEK 6 ── -->
+    <section id="week6" class="week-section">
+      <div class="week-header">
+        <div class="eyebrow">Clan Events | 07 Mar 2026</div>
+        <img src="images/belmontslogo.jpg" alt="Belmonts Logo" class="clan-logo-header">
+        <h2>Weekly Bash - Belmonts' Chronicle</h2>
+        <p class="motto">"Ad Montem Sapientiae"</p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">9:45 AM – 10:00 AM</span> <h3 class="timeline-title">The Opening Proclamation</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">10:00 AM – 11:00 AM</span> <h3 class="timeline-title">The Imperial Nexus</h3> <p class="timeline-desc">By Basher Samuel and Basher Ancy</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">11:00 AM – 12:30 PM</span> <h3 class="timeline-title">The Forge of Ingenium</h3> <p class="timeline-desc">By Basher Aadhithya and Basher Sowmiya</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">12:30 PM – 1:15 PM</span> <h3 class="timeline-title">The Knight's Reprieve</h3> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">1:15 PM – 2:15 PM</span> <h3 class="timeline-title">The Quest for the Lost Relic</h3> <p class="timeline-desc">By Basher Geo Nithin and Basher Harshini</p> </div> </div>
+        <div class="timeline-item"> <div class="timeline-dot"></div> <div class="timeline-content"> <span class="timeline-time">2:15 PM – 3:00 PM</span> <h3 class="timeline-title">The Arena of Valor</h3> </div> </div>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="images/belms/IMG-20260307-WA0002.jpg" alt="Belmonts Bash"></div>
+        <div class="gallery-item"><img src="images/belms/IMG-20260308-WA0005.jpg" alt="Belmonts Bash"></div>
+        <div class="gallery-item"><img src="images/belms/IMG-20260308-WA0006.jpg" alt="Belmonts Bash"></div>
+        <div class="gallery-item"><img src="images/belms/IMG-20260308-WA0018.jpg" alt="Belmonts Bash"></div>
+      </div>
+    </section>
+
+    <!-- ── WEEK 7 ── -->
+    <section id="week7" class="week-section week-dark">
+      <div class="week-header">
+        <img src="images/w b media/bashers.png" alt="Bashers Logo" class="clan-logo-header" style="border-color: var(--accent-purple);">
+        <h2>Wrap-up Bash</h2>
+        <div class="eyebrow" style="background: rgba(188, 111, 241, 0.2); color: var(--accent-purple);">MARCH 14, 2026</div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><span class="timeline-time">10:00 AM</span> <h3 class="timeline-title">Intro and Hurdle</h3><p class="timeline-desc">By Jeshwin</p></div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><span class="timeline-time">10:15 AM</span> <h3 class="timeline-title">ComeBack</h3><p class="timeline-desc">By Dr. Pon Parthiban</p></div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><span class="timeline-time">10:50 AM</span> <h3 class="timeline-title">Pookie Rookie</h3></div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><span class="timeline-time">12:10 PM</span> <h3 class="timeline-title">Lunch Break</h3></div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><span class="timeline-time">02:30 PM</span> <h3 class="timeline-title">Rookie Reward</h3></div></div>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0081.jpg" alt="Wrap-up Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0092.jpg" alt="Wrap-up Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0112.jpg" alt="Wrap-up Bash"></div>
+        <div class="gallery-item"><img src="images/w b media/wrapup/IMG-20260315-WA0136.jpg" alt="Wrap-up Bash"></div>
+      </div>
+    </section>
+
+    <a href="weekly-bash.html" class="back-link">← Return to Bash Archive Center</a>
+  </div>
+
+  <script>
+    // Simple scroll spy for sticky nav
+    const sections = document.querySelectorAll('.week-section');
+    const navDots = document.querySelectorAll('.nav-dot');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= (sectionTop - 150)) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navDots.forEach(dot => {
+        dot.classList.remove('active');
+        if (dot.getAttribute('href') === `#${current}`) {
+          dot.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

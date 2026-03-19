@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaders | Belmont Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #d9a65a;
+      --bg-deep: #c28e43;
+      --surface: #4a3421;
+      --surface-soft: #5c4229;
+      --panel: #2f2116;
+      --text-dark: #3c2919;
+      --text-gold: #efc784;
+      --text-ivory: #f7ebcf;
+      --shadow: 0 22px 50px rgba(43, 29, 16, 0.22);
+      --shadow-strong: 0 24px 55px rgba(25, 16, 9, 0.38);
+      --radius-lg: 28px;
+      --radius-sm: 12px;
+      --max-width: 1200px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Cormorant Garamond", serif;
+      color: var(--text-dark);
+      background:
+        radial-gradient(circle at top left, rgba(255, 237, 202, 0.34), transparent 28%),
+        radial-gradient(circle at 85% 14%, rgba(104, 73, 41, 0.18), transparent 22%),
+        linear-gradient(180deg, #e0af63 0%, var(--bg) 38%, var(--bg-deep) 100%);
+      overflow-x: hidden;
+    }
+
+    body::before, body::after {
+      content: "";
+      position: fixed;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(10px);
+      opacity: 0.28;
+      z-index: 0;
+    }
+    body::before { top: -100px; left: -90px; background: radial-gradient(circle, rgba(247,235,207,0.75), transparent 68%); }
+    body::after { right: -90px; bottom: -120px; background: radial-gradient(circle, rgba(74,52,33,0.42), transparent 72%); }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    .page-shell {
+      position: relative;
+      z-index: 1;
+      width: min(calc(100% - 32px), var(--max-width));
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    /* ── HEADER ── */
+    .site-header { position: sticky; top: 12px; z-index: 30; margin-bottom: 28px; }
+
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 22px;
+      border: 1px solid rgba(247,235,207,0.18);
+      border-radius: 999px;
+      background: rgba(47,33,22,0.88);
+      color: var(--text-gold);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+
+    .brand-mark {
+      width: 48px; height: 48px; flex: 0 0 48px;
+      display: grid; place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(239,199,132,0.4);
+      background: radial-gradient(circle at 30% 30%, rgba(247,235,207,0.26), transparent 46%), linear-gradient(145deg, #7b5a36, #3f2a19);
+      font-family: "Cinzel", serif; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.18em;
+    }
+
+    .brand-copy strong, .brand-copy span { display: block; }
+    .brand-copy strong { font-family: "Cinzel", serif; font-size: 1rem; letter-spacing: 0.18em; text-transform: uppercase; }
+    .brand-copy span { font-size: 0.95rem; color: rgba(247,235,207,0.8); letter-spacing: 0.04em; }
+
+    .desktop-nav { display: flex; align-items: center; gap: 14px; font-size: 1.05rem; letter-spacing: 0.06em; }
+    .desktop-nav a { position: relative; padding: 8px 2px; }
+    .desktop-nav a::after {
+      content: ""; position: absolute; left: 0; bottom: 0;
+      width: 100%; height: 2px; transform: scaleX(0); transform-origin: center;
+      background: var(--text-gold); transition: transform 180ms ease;
+    }
+    .desktop-nav a:hover::after, .desktop-nav a:focus-visible::after { transform: scaleX(1); }
+    .desktop-nav a[aria-current="page"]::after { transform: scaleX(1); }
+
+    .menu-toggle {
+      display: none; width: 48px; height: 48px; border: 0; border-radius: 50%;
+      background: rgba(239,199,132,0.12); color: var(--text-gold); cursor: pointer;
+    }
+    .menu-toggle svg { width: 24px; height: 24px; margin: auto; display: block; }
+
+    .mobile-menu { position: fixed; inset: 0; display: none; place-items: center; padding: 20px; background: rgba(24,16,10,0.82); z-index: 40; }
+    .mobile-menu.open { display: grid; }
+    .mobile-panel { width: min(100%, 360px); padding: 24px; border-radius: var(--radius-lg); background: var(--panel); color: var(--text-gold); box-shadow: var(--shadow-strong); border: 1px solid rgba(239,199,132,0.18); }
+    .mobile-panel header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .mobile-panel strong { font-family: "Cinzel", serif; letter-spacing: 0.18em; text-transform: uppercase; }
+    .mobile-close { border: 0; background: transparent; color: inherit; font-size: 1.8rem; cursor: pointer; line-height: 1; }
+    .mobile-links { display: grid; gap: 12px; }
+    .mobile-links a { padding: 14px 16px; border-radius: var(--radius-sm); background: rgba(239,199,132,0.08); border: 1px solid rgba(239,199,132,0.08); font-family: "Cinzel", serif; letter-spacing: 0.06em; }
+
+    /* ── PAGE INTRO ── */
+    .page-intro {
+      padding: 48px clamp(22px, 5vw, 54px);
+      border-radius: 36px;
+      background: linear-gradient(135deg, rgba(255,239,213,0.22), transparent 30%), linear-gradient(180deg, rgba(74,52,33,0.92) 0%, rgba(47,33,22,0.96) 100%);
+      color: var(--text-gold);
+      box-shadow: var(--shadow-strong);
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-bottom: 18px; padding: 8px 14px; border-radius: 999px;
+      background: rgba(239,199,132,0.12); font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .eyebrow::before, .eyebrow::after { content: ""; width: 28px; height: 1px; background: rgba(239,199,132,0.48); }
+
+    .page-intro h1 {
+      margin: 0 0 14px;
+      font-family: "Cinzel", serif;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .page-intro p {
+      margin: 0;
+      font-size: clamp(1.15rem, 2vw, 1.35rem);
+      line-height: 1.55;
+      color: rgba(247,235,207,0.88);
+      max-width: 56ch;
+      margin: 0 auto;
+    }
+
+    /* ── CONTENT SECTION ── */
+    .content-section {
+      margin-top: 28px;
+      padding: clamp(24px, 4vw, 40px);
+      border-radius: 34px;
+      background: rgba(255,245,224,0.5);
+      border: 1px solid rgba(60,41,25,0.08);
+      box-shadow: var(--shadow);
+    }
+
+    .section-header { margin-bottom: 30px; }
+    .section-kicker { margin: 0 0 8px; font-family: "Cinzel", serif; font-size: 0.92rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(60,41,25,0.72); }
+    .section-title { margin: 0; font-family: "Cinzel", serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dark); }
+
+    /* ── LEADERS GRID ── */
+    .leaders-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .leader-card {
+      border-radius: 24px;
+      background: rgba(255,250,239,0.62);
+      border: 1px solid rgba(60,41,25,0.08);
+      overflow: hidden;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .leader-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 22px 44px rgba(24,16,10,0.24);
+    }
+
+    .leader-card-inner { display: grid; grid-template-columns: 180px minmax(0, 1fr); }
+
+    .leader-card img {
+      width: 180px;
+      height: 100%;
+      min-height: 240px;
+      object-fit: cover;
+      background: var(--surface-soft);
+    }
+
+    .leader-copy {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .role-tag {
+      display: inline-flex; align-items: center;
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(74,52,33,0.10);
+      font-family: "Cinzel", serif; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    .leader-copy h3 {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .leader-divider {
+      border: none;
+      border-top: 1px solid rgba(60,41,25,0.14);
+      margin: 0;
+    }
+
+    .leader-copy p {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.55;
+      color: rgba(60,41,25,0.82);
+    }
+
+    .leader-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 10px;
+    }
+
+    .meta-chip {
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(60,41,25,0.14);
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── ORGANIZERS GRID ── */
+    .organizers-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .org-card {
+      border-radius: 24px;
+      background: rgba(255,250,239,0.62);
+      border: 1px solid rgba(60,41,25,0.08);
+      overflow: hidden;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .org-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 22px 44px rgba(24,16,10,0.24);
+    }
+
+    .org-card-inner { display: grid; grid-template-columns: 180px minmax(0, 1fr); }
+
+    .org-card img {
+      width: 180px;
+      height: 100%;
+      min-height: 240px;
+      object-fit: cover;
+      background: var(--surface-soft);
+    }
+
+    .org-copy {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .org-copy h3 { 
+      margin: 0; 
+      font-family: "Cinzel", serif; 
+      font-size: 1.5rem; 
+      letter-spacing: 0.06em; 
+      text-transform: uppercase; 
+    }
+
+    .org-copy p { 
+      margin: 0; 
+      font-size: 1.1rem; 
+      line-height: 1.55; 
+      color: rgba(60,41,25,0.82); 
+    }
+
+    .org-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 10px; 
+      margin-top: auto; 
+      padding-top: 10px;
+    }
+    
+    .org-meta .meta-chip { 
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(60,41,25,0.14);
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 550ms ease, transform 550ms ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── FOOTER ── */
+    .site-footer { position: relative; margin-top: 34px; padding: 48px 24px 30px; text-align: center; color: var(--text-dark); }
+    .mountains { position: relative; height: 86px; margin-bottom: 20px; overflow: hidden; }
+    .mountains::before, .mountains::after {
+      content: ""; position: absolute; inset: auto 0 0; height: 86px;
+      background: linear-gradient(180deg, transparent, rgba(60,41,25,0.08));
+      clip-path: polygon(0 100%, 10% 52%, 20% 100%, 33% 36%, 46% 100%, 58% 46%, 70% 100%, 84% 28%, 100% 100%);
+    }
+    .mountains::after { opacity: 0.5; transform: scaleY(0.72) translateY(12px); }
+    .footer-motto { margin: 0 0 10px; font-family: "Cinzel", serif; font-size: clamp(1rem, 2vw, 1.2rem); letter-spacing: 0.16em; text-transform: uppercase; }
+    .site-footer p { margin: 0; font-size: 1.06rem; letter-spacing: 0.04em; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .leaders-grid { grid-template-columns: 1fr; }
+      .organizers-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .leader-card-inner { 
+        display: flex;
+        flex-direction: row;
+      }
+      .org-card-inner {
+        display: flex;
+        flex-direction: row;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-shell { padding-top: 12px; }
+      .desktop-nav { display: none; }
+      .menu-toggle { display: block; }
+      .leader-card-inner, .org-card-inner { 
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .leader-card img, .org-card img { 
+        width: 180px; 
+        height: 180px;
+        max-width: 300px;
+      }
+      .role-tag { justify-content: center; }
+      .leader-meta, .org-meta { justify-content: center; }
+      .organizers-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-panel">
+      <header>
+        <strong>Belmont Menu</strong>
+        <button class="mobile-close" type="button" id="mobileClose" aria-label="Close navigation">&times;</button>
+      </header>
+      <nav class="mobile-links">
+        <a href="index.html">Home</a>
+        <a href="leaders.html">Leaders</a>
+        <a href="members.html">Members</a>
+        <a href="rookies.html">Rookies</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="header-bar">
+        <a class="brand" href="index.html" aria-label="Belmont home">
+          <span class="brand-mark">BB</span>
+          <span class="brand-copy">
+            <strong>Belmont</strong>
+            <span>Basher Dev Squad</span>
+          </span>
+        </a>
+
+        <nav class="desktop-nav" aria-label="Primary navigation">
+          <a href="index.html">Home</a>
+          <a href="leaders.html" aria-current="page">Leaders</a>
+          <a href="members.html">Members</a>
+          <a href="rookies.html">Rookies</a>
+        </nav>
+
+        <button class="menu-toggle" type="button" id="menuToggle" aria-label="Open navigation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <div class="page-intro reveal">
+        <div class="eyebrow">Command Circle</div>
+        <h1>Our Leaders</h1>
+        <p>The captains and organizers who steer the Belmont clan — each one bound to a legendary character and a technical domain.</p>
+      </div>
+
+      <!-- CAPTAIN BASHERS -->
+      <section class="content-section reveal">
+        <div class="section-header">
+          <p class="section-kicker">Captains</p>
+          <h2 class="section-title">Captain Bashers</h2>
+        </div>
+
+        <div class="leaders-grid">
+          <article class="leader-card">
+            <div class="leader-card-inner">
+              <img src="images/julia-belmont.jpg" alt="Julia Belmont portrait">
+              <div class="leader-copy">
+                <span class="role-tag">Captain Basher (CB)</span>
+                <h3>Aadhithya Mahesh</h3>
+                <hr class="leader-divider">
+                <p>A passionate game developer and designer, eager to turn code into creativity. Explores different game engines and design tools, contributing to the clan by supporting teammates, creating projects, and sharing innovative ideas in game development.</p>
+                <div class="leader-meta">
+                  <span class="meta-chip">Game Developer</span>
+                  <span class="meta-chip">Julia Belmont</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="leader-card">
+            <div class="leader-card-inner">
+              <img src="images/richter-belmont.jpg" alt="Richter Belmont portrait">
+              <div class="leader-copy">
+                <span class="role-tag">Captain Basher (CB)</span>
+                <h3>Geo Nithin</h3>
+                <hr class="leader-divider">
+                <p>A passionate full-stack Java web developer, deeply curious and driven to learn, who strives to apply knowledge to create meaningful impact. Enthusiastic about exploring new technologies, with a keen interest in branching into data science.</p>
+                <div class="leader-meta">
+                  <span class="meta-chip">Full-stack Web Developer</span>
+                  <span class="meta-chip">Richter Belmont</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- OG CAPTAIN BASHER -->
+      <section class="content-section reveal">
+        <div class="section-header">
+          <p class="section-kicker">FORMER CB</p>
+          <h2 class="section-title">OG Captain Basher</h2>
+        </div>
+
+        <div class="leaders-grid">
+          <article class="leader-card">
+            <div class="leader-card-inner">
+              <img src="images/sypha-belnades.jpg" alt="Sypha Belnades portrait">
+              <div class="leader-copy">
+                <span class="role-tag">OG Captain Basher (OG CB)</span>
+                <h3>Sriharshini</h3>
+                <hr class="leader-divider">
+                <p>A passionate full-stack web developer. Skilled in leadership, event organization, and teamwork. Dedicated to guiding members, fostering creativity, and driving the clan's growth through innovation, collaboration, and continuous learning in technology.</p>
+                <div class="leader-meta">
+                  <span class="meta-chip">Full-stack Web Developer</span>
+                  <span class="meta-chip">Sypha Belnades</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ORGANIZERS -->
+      <section class="content-section reveal">
+        <div class="section-header">
+          <p class="section-kicker">Admins</p>
+          <h2 class="section-title">Organizers</h2>
+        </div>
+
+        <div class="organizers-grid">
+          <article class="org-card">
+            <div class="org-card-inner">
+              <img src="images/juste-belmont.jpg" alt="Juste Belmont portrait">
+              <div class="org-copy">
+                <span class="role-tag">EO Organizer</span>
+                <h3>Jeswin Antony</h3>
+                <hr class="leader-divider">
+                <p>"The way of the world" has always fascinated me. I am driven by the pursuit of leveraging AI to make the world a better place.</p>
+                <div class="org-meta">
+                  <span class="meta-chip">AI / ML</span>
+                  <span class="meta-chip">Juste Belmont</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="org-card">
+            <div class="org-card-inner">
+              <img src="images/leon-belmont.jpg" alt="Leon Belmont portrait">
+              <div class="org-copy">
+                <span class="role-tag">IT Organizer</span>
+                <h3>Michal Nithish</h3>
+                <hr class="leader-divider">
+                <p>Exploring the field of software development, with a passion for building efficient and impactful solutions.</p>
+                <div class="org-meta">
+                  <span class="meta-chip">Software Developer</span>
+                  <span class="meta-chip">Leon Belmont</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="org-card">
+            <div class="org-card-inner">
+              <img src="images/simon-belmont.jpg" alt="Simon Belmont portrait">
+              <div class="org-copy">
+                <span class="role-tag">Former Lead Organizer</span>
+                <h3>Maxwell Rubert</h3>
+                <hr class="leader-divider">
+                <p>A curious kid exploring new things, who enjoys seeing others grow alongside me. I strive to create positive and collaborative learning environments where everyone can thrive.</p>
+                <div class="org-meta">
+                  <span class="meta-chip">Data Scientist</span>
+                  <span class="meta-chip">Simon Belmont</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer reveal">
+      <div class="mountains" aria-hidden="true"></div>
+      <h2 class="footer-motto">Ad Montem Sapientiae</h2>
+      <p>Belmont since 2024. Basher Dev Squad, Belmont Edition.</p>
+    </footer>
+  </div>
+
+  <script>
+    const mobileMenu = document.getElementById("mobileMenu");
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileClose = document.getElementById("mobileClose");
+    const mobileLinks = mobileMenu.querySelectorAll("a");
+
+    function setMenuState(isOpen) {
+      mobileMenu.classList.toggle("open", isOpen);
+      mobileMenu.setAttribute("aria-hidden", String(!isOpen));
+      document.body.style.overflow = isOpen ? "hidden" : "";
+    }
+
+    menuToggle.addEventListener("click", () => setMenuState(true));
+    mobileClose.addEventListener("click", () => setMenuState(false));
+    mobileMenu.addEventListener("click", e => { if (e.target === mobileMenu) setMenuState(false); });
+    mobileLinks.forEach(link => link.addEventListener("click", () => setMenuState(false)));
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week Four | Weekly Bash - Bel-Bash</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #d9a65a;
+      --bg-deep: #c28e43;
+      --surface: #4a3421;
+      --surface-soft: #5c4229;
+      --panel: #2f2116;
+      --text-dark: #3c2919;
+      --text-gold: #efc784;
+      --text-ivory: #f7ebcf;
+      --shadow: 0 22px 50px rgba(43, 29, 16, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: "Cormorant Garamond", serif;
+      color: var(--text-dark);
+      background:
+        radial-gradient(circle at top left, rgba(255, 237, 202, 0.34), transparent 28%),
+        linear-gradient(180deg, #e0af63 0%, var(--bg) 38%, var(--bg-deep) 100%);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 60px 20px;
+    }
+
+    .container {
+      width: min(100%, 800px);
+      text-align: center;
+    }
+
+    .header {
+      margin-bottom: 50px;
+    }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px; margin-bottom: 18px;
+      padding: 8px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.12);
+      font-family: "Cinzel", serif; font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
+    .header h1 {
+      margin: 0; font-family: "Cinzel", serif; font-size: clamp(2rem, 5vw, 3.5rem);
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--panel);
+    }
+
+    .clan-logo-header {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 20px auto;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      border: 3px solid var(--panel);
+      display: block;
+      object-fit: cover;
+    }
+
+    .event-banner {
+      width: 100%;
+      max-width: 700px;
+      height: auto;
+      border-radius: 15px;
+      margin: 30px 0;
+      box-shadow: 0 15px 45px rgba(0,0,0,0.3);
+      border: 4px solid var(--panel);
+    }
+
+    .motto {
+      font-style: italic;
+      color: var(--surface);
+      margin-bottom: 40px;
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      position: relative;
+      margin: 60px auto;
+      padding: 20px 0;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 31px;
+      top: 40px;
+      bottom: 40px;
+      width: 2px;
+      background: var(--panel);
+      opacity: 0.3;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 40px;
+      padding-left: 80px;
+    }
+
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: 20px;
+      top: 5px;
+      width: 24px;
+      height: 24px;
+      background: var(--panel);
+      border-radius: 50%;
+      border: 4px solid var(--bg);
+      z-index: 2;
+    }
+
+    .timeline-content {
+      background: rgba(47, 33, 22, 0.05);
+      padding: 20px;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .timeline-content:hover {
+      transform: translateX(10px);
+      background: rgba(47, 33, 22, 0.08);
+    }
+
+    .timeline-time {
+      display: block; font-family: "Cinzel", serif; font-size: 0.85rem;
+      color: var(--surface); font-weight: 700; margin-bottom: 6px;
+    }
+
+    .timeline-title {
+      margin: 0 0 8px; font-family: "Cinzel", serif; font-size: 1.25rem;
+      color: var(--panel); letter-spacing: 0.04em;
+    }
+
+    .timeline-desc { margin: 0; line-height: 1.6; color: var(--surface); font-size: 1.1rem; }
+
+    /* ── GALLERY ── */
+    .event-highlights { width: 100%; max-width: 1000px; margin-top: 80px; }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 40px;
+    }
+    .gallery-item {
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      border-radius: 15px;
+      border: 5px solid var(--panel);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      background: var(--panel);
+    }
+    .gallery-item:hover { transform: scale(1.03) translateY(-10px); z-index: 10; }
+    .gallery-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.1); }
+
+    .back-nav {
+      margin-top: 60px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(0,0,0,0.1);
+    }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 12px;
+      text-decoration: none; color: var(--panel);
+      font-family: "Cinzel", serif; font-weight: 700; font-size: 1.1rem;
+      transition: gap 0.3s ease;
+    }
+    .btn-back:hover { gap: 18px; }
+
+    /* ── WEEK NAVIGATION ── */
+    .week-navigation {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 60px 0 30px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(47, 33, 22, 0.15);
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      font-family: "Cinzel", serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 12px 24px;
+      border-radius: 50px;
+      background: var(--panel);
+      color: var(--text-gold);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-btn:hover {
+      background: var(--surface);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 40px 15px; }
+      .timeline-item { padding-left: 60px; }
+      .timeline::before { left: 21px; }
+      .timeline-dot { left: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header class="header">
+      <div class="eyebrow"><span>⚔</span> Weekly Bash 04 <span>⚔</span></div>
+      <img src="images/w b media/bellbash.jpg" alt="Bel-Bash Logo" class="clan-logo-header">
+      <h1>Bel-Bash</h1>
+     
+      <p class="motto">Reflect. Master. Compete. Play.</p>
+    </header>
+
+    <!-- ── TIMELINE ── -->
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <span class="timeline-time">Rookies' Reflection Forum</span>
+          <h3 class="timeline-title">The Path of Growth</h3>
+          <p class="timeline-desc">Balanced academics and club work. Moderated by Captain Bashers.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <span class="timeline-time">Blockchain Mastery — Part II</span>
+          <h3 class="timeline-title">The Digital Ledger</h3>
+          <p class="timeline-desc">Deep dive into real-world use cases by Basher Samuel.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <span class="timeline-time">The Intellect Arena</span>
+          <h3 class="timeline-title">The Scholar's Duel</h3>
+          <p class="timeline-desc">Knowledge and quick thinking quiz led by Basher Geo.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <span class="timeline-time">Nexus Play</span>
+          <h3 class="timeline-title">The Grand Alliance</h3>
+          <p class="timeline-desc">Interactive bonding and gaming session with Basher Aadhithya.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EVENT HIGHLIGHTS ── -->
+    <section class="event-highlights">
+      <div class="header">
+        <h1>Event Highlights</h1>
+      </div>
+      
+      <div class="gallery-grid">
+         <img src="images/w b media/bel-bash.png" alt="Bel-Bash Event Media" class="event-banner">
+    
+      </div>
+    </section>
+
+    <div class="week-navigation">
+      <a href="bash-week3.html" class="nav-btn prev">← Week 3</a>
+      <a href="bash-week5.html" class="nav-btn next">Week 5 →</a>
+    </div>
+
+    <nav class="back-nav">
+      <a href="weekly-bash.html" class="btn-back">← Back to Archives</a>
+    </nav>
+  </div>
+</body>
+</html>
+
+</body>
+</html>
